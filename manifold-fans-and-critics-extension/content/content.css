@@ -17,10 +17,20 @@
   top: 30px;
   left: -5px;
   padding: 4px;
+  padding-top: 7px;
   background-color: #334054;
   z-index: 9998;
   white-space: nowrap;
   border: 1px solid black;
   border-radius: 5px;
   color: white;
+}
+
+.hover-link {
+  display: block;
+}
+.fan-link {
+}
+.critic-link {
+  color: #FFC2C5
 }

@@ -114,24 +114,29 @@ function replaceImages() {
       event.stopPropagation();
     });
 
-    userNameToTopPositions[imageUsername].forEach((position) => {
+    var criticSeparator = false;
+    userNameToTopPositions[imageUsername].forEach((position, i) => {
       // Create a new link to this market
       const link = document.createElement('a');
       link.href = permMarkets[position.marketId].url;
       link.target = '_blank';
+      // add the class fan-link
+      link.classList.add('hover-link');
       link.textContent = permMarkets[position.marketId].fanString + " #" + position.place +" ";
       if (position.direction == 'YES') {
         link.textContent += 'Fan!';
+        link.classList.add('fan-link');
       } else {
         link.textContent += 'Critic';
+        link.classList.add('critic-link');
+      }
+      if (position.direction != 'YES' && !criticSeparator) {
+        criticSeparator = true;
+        link.style.marginTop = '10px';
       }
 
       // Add the link to the hover text
       hoverText.appendChild(link);
-
-      // Separate each link with a newline
-      const newline = document.createElement('br');
-      hoverText.appendChild(newline);
     });
   });
 }
