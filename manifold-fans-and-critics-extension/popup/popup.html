@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Manifold Fans and Critics Settings</title>
+  </head>
+  <body>
+    <h1>Manifold Fans and Critics Settings</h1>
+    <label for="my-setting">My Setting:</label>
+    <input id="my-setting" type="text">
+    <button id="save-button">Save</button>
+    <script>
+      // load the current value of 'mySetting' from local storage
+      localStorage.getItem('mySetting', ({ mySetting }) => {
+        if (mySetting) {
+          document.querySelector('#my-setting').value = mySetting;
+        }
+      });
+
+      // save the value of 'mySetting' to local storage
+      document.querySelector('#save-button').addEventListener('click', () => {
+        const value = document.querySelector('#my-setting').value;
+        localStorage.setItem('mySetting', value);
+        alert('Settings saved!');
+      });
+    </script>
+  </body>
+</html>
+ 

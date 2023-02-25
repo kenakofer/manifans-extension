@@ -1,0 +1,26 @@
+.example-icon {
+  position: absolute;
+  top: 12px;
+  left: -12px;
+  width: 25px;
+  height: 32px;
+  /* background-color: red; */
+  background-image: url('foam-hand.png');
+  background-size: cover;
+  z-index: 9999;
+  /* opacity: 0.5; */
+}
+
+.example-hover-text {
+  position: absolute;
+  display: none;
+  top: 30px;
+  left: -5px;
+  padding: 4px;
+  background-color: #334054;
+  z-index: 9998;
+  white-space: nowrap;
+  border: 1px solid black;
+  border-radius: 5px;
+  color: white;
+}
