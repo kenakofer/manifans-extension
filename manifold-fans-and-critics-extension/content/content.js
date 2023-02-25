@@ -2,11 +2,10 @@
 console.log('Current page URL:', window.location.href);
 
 function replaceImages() {
+  console.log("Replacing images...");
+
   // Select all images with the "example-class" class
   const images = document.querySelectorAll('.my-0');
-
-  images.forEach((image) => {
-  });
 
   // Loop through each image and add an overlay icon
   images.forEach((image) => {
@@ -116,7 +115,14 @@ if (permMarkets) {
 }
 
 replaceImages();
-replaceImages();
+
+// Listen for clicks on the nav with aria-label="Tabs", and replace the images when it is clicked
+document.querySelector('[aria-label="Tabs"]').addEventListener('click', () => {
+  // Wait for the page to load
+  setTimeout(() => {
+    replaceImages();
+  }, 250);
+});
 
 
 //function to reload all market data
