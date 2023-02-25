@@ -3,12 +3,17 @@
   <head>
     <meta charset="utf-8">
     <title>Manifold Fans and Critics Settings</title>
+    <script src="constants.js"></script>
   </head>
   <body>
     <h1>Manifold Fans and Critics Settings</h1>
     <label for="my-setting">My Setting:</label>
     <input id="my-setting" type="text">
     <button id="save-button">Save</button>
+    <button id="clear-button">Clear cache</button>
+    <label for="storage-size">Storage Size:</label>
+    <input id="storage-size" type="text">
+
     <script>
       // load the current value of 'mySetting' from local storage
       localStorage.getItem('mySetting', ({ mySetting }) => {
@@ -23,7 +28,28 @@
         localStorage.setItem('mySetting', value);
         alert('Settings saved!');
       });
+
+      // button to clear this extension's values from local storage
+      document.querySelector('#clear-button').addEventListener('click', () => {
+        let total = 0;
+        // Loop through all items in storage and remove those that are for this extension
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key.startsWith(EXTENSION_PREFIX)) {
+            let length = localStorage.getItem(key).length;
+            localStorage.removeItem(key);
+            console.log("Removed " + key + " (" + length + " bytes)");
+            total += length;
+          }
+        }
+
+
+        alert('All cached extension data cleared! (' + total + ' bytes)');
+      });
+
+      // field that displays the size of local storage
+      document.querySelector('#storage-size').value = localStorage.length;
+
     </script>
   </body>
 </html>
- 

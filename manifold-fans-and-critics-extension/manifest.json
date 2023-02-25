@@ -44,9 +44,13 @@
         "content/content.css"
       ],
       "js": [
-        "content/content.js"
+        "content/content.js",
+        "constants.js"
       ],
       "run_at": "document_end"
     }
+  ],
+  "web_accessible_resources": [
+    "constants.js"
   ]
 }
