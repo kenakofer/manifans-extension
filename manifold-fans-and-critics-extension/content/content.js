@@ -190,9 +190,23 @@ async function buildUserNameToTopPositions(spots, permMarkets) {
       });
     });
   };
-  console.log(userNameToTopPositions);
+
+  // For each key in userNameToTopPositions, sort the array by direction and then place
+  console.log("Sorting positions for each username...");
+  Object.keys(userNameToTopPositions).forEach((username) => {
+    userNameToTopPositions[username].sort((a, b) => {
+      if (a.direction == b.direction) {
+        return a.place - b.place;
+      } else if (a.direction == 'YES') {
+        return -1;
+      } else {
+        return 1;
+      }
+    });
+  });
 
   //save userNameToTopPositions to local storage
+  console.log("Saving positions to local storage.");
   localStorage.setItem(USERNAME_TO_TO_POSITIONS_KEY, JSON.stringify(userNameToTopPositions));
 }
 

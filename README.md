@@ -3,7 +3,6 @@ Browser extension for Manifold Markets, displaying digital flair on users that h
 
 ### TODO
 
- - Sort the hover text (Fan ascending, then Critic ascending)
  - Solve the disappearing problem on the Positions tab
  - Refreshing user to top positions
  - Refreshing permanent market list
