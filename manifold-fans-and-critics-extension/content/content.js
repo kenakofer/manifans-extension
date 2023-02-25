@@ -32,14 +32,17 @@ document.querySelector('[aria-label="Tabs"]').addEventListener('click', () => {
   }
   if (permMarkets && !localStorage.getItem(USERNAME_TO_TO_POSITIONS_KEY)) {
     await buildUserNameToTopPositions(topSpotCount, permMarkets);
+    replaceImages();
   }
-
-  replaceImages();
   console.log('Extension done!');
   console.log(permMarkets);
   console.log(JSON.parse(localStorage.getItem(USERNAME_TO_TO_POSITIONS_KEY)));
 })();
 
+// Replace the images once the page has loaded
+window.onload = () => {
+  replaceImages();
+};
 
 function replaceImages() {
   console.log("Replacing images...");
