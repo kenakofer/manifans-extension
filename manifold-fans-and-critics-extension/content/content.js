@@ -21,6 +21,12 @@ function replaceImages() {
       return;
     }
 
+    // Skip if the image has already been replaced
+    if (image.classList.contains('replaced-by-extension')) {
+      return;
+    }
+    image.classList.add('replaced-by-extension');
+
     const wrapper = document.createElement('div');
     wrapper.style.position = 'relative'; // set position to relative to position the icon correctly
     image.parentNode.insertBefore(wrapper, image); // insert the wrapper before the image
@@ -109,6 +115,7 @@ if (permMarkets) {
   localStorage.setItem(userToMarketsKey, JSON.stringify(userToMarkets));
 }
 
+replaceImages();
 replaceImages();
 
 
