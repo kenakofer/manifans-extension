@@ -87,18 +87,26 @@ function replaceImages() {
 
     iconDiv.addEventListener('mouseover', () => {
       hoverText.style.display = 'block';
+      hoverText.style.zIndex = '10000';
+      iconDiv.style.zIndex = '10001';
     });
 
     iconDiv.addEventListener('mouseleave', () => {
       hoverText.style.display = 'none';
+      hoverText.style.zIndex = '9998';
+      iconDiv.style.zIndex = '9999';
     });
 
     // add event listeners to the market info div to keep it displayed when the user hovers over it
     hoverText.addEventListener('mouseenter', () => {
       hoverText.style.display = 'block';
+      hoverText.style.zIndex = '10000';
+      iconDiv.style.zIndex = '10001';
     });
     hoverText.addEventListener('mouseleave', () => {
       hoverText.style.display = 'none';
+      hoverText.style.zIndex = '9998';
+      iconDiv.style.zIndex = '9999';
     });
 
     // prevent the event from bubbling up to the parent img element
