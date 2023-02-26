@@ -2,6 +2,10 @@ EXTENSION_PREFIX = 'manifold-fans-and-critics-extension_';
 PERM_MARKETS_KEY = EXTENSION_PREFIX + 'perm-markets';
 USERNAME_TO_TO_POSITIONS_KEY = EXTENSION_PREFIX + 'user-to-markets';
 PLACES_TO_SHOW_KEY = EXTENSION_PREFIX + 'places-to-show';
+TIME_OF_LAST_PAGE_LOAD_KEY = EXTENSION_PREFIX + 'time-of-last-page-load';
+
+// Set time of last page load to now
+store(TIME_OF_LAST_PAGE_LOAD_KEY, Date.now());
 
 // Listen for clicks on the FIRST nav with aria-label="Tabs", and replace the images when it is clicked
 var tabs = document.querySelector('nav[aria-label="Tabs"]');

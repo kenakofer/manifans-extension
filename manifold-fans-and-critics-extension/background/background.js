@@ -4,6 +4,7 @@ USERNAME_TO_TO_POSITIONS_KEY = EXTENSION_PREFIX + 'user-to-markets';
 PLACES_TO_SHOW_KEY = EXTENSION_PREFIX + 'places-to-show';
 UPDATE_NOW_KEY = EXTENSION_PREFIX + 'update-now';
 TIME_OF_LAST_UPDATE_KEY = EXTENSION_PREFIX + 'time-of-last-update';
+TIME_OF_LAST_PAGE_LOAD_KEY = EXTENSION_PREFIX + 'time-of-last-page-load';
 RELOAD_AFTER_SECONDS = 10 * 60; // 10 minutes
 
 NECESSARY_MARKET_KEYS = ['url', 'fanString'];
@@ -41,12 +42,27 @@ setInterval(async () => {
 
 async function fillInMissingData() {
     console.log("Checking our stored data");
+
+    // Check if last page load was more than 1 minute ago
+    var timeOfLastPageLoad = await get(TIME_OF_LAST_PAGE_LOAD_KEY);
+    if (!timeOfLastPageLoad || (Date.now() - timeOfLastPageLoad) > 1000 * 60 * 10) {
+        console.log("User is not active on Manifold, not updating");
+        store(LOAD_STATUS_KEY, {
+            percent: 1.0,
+            display: "inline-block",
+            message: "Will not sync while user is not active on Manifold"});
+            return;
+    }
+
+
     var permMarkets = await getJson(PERM_MARKETS_KEY);
     var userNameToTopPositions = await getJson(USERNAME_TO_TO_POSITIONS_KEY);
+
 
     // Check if update-now is set, or if time of last update is more than 1 hour ago
     var timeOfLastUpdate = await get(TIME_OF_LAST_UPDATE_KEY);
     var updateNow = await get(UPDATE_NOW_KEY);
+
     if (updateNow || !timeOfLastUpdate || (Date.now() - timeOfLastUpdate) > 1000 * RELOAD_AFTER_SECONDS) {
         // Invalidate the variables, but not the storage
         permMarkets = null;
