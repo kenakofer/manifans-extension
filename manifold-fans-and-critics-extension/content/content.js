@@ -4,16 +4,24 @@ USERNAME_TO_TO_POSITIONS_KEY = EXTENSION_PREFIX + 'user-to-markets';
 PLACES_TO_SHOW_KEY = EXTENSION_PREFIX + 'places-to-show';
 
 // Listen for clicks on the FIRST nav with aria-label="Tabs", and replace the images when it is clicked
+var tabs = document.querySelector('nav[aria-label="Tabs"]');
+tabs.addEventListener('click', replaceImagesDelayed);
 setTimeout(() => {
   console.log('timeout');
   // Only grab the first nav with aria-label="Tabs"
-  const tabs = document.querySelector('nav[aria-label="Tabs"]');
-  tabs.addEventListener('click', () => {
-    // Wait for the tab to load
-    console.log('clicked');
-    setTimeout(replaceImages, 250);
-  });
+  tabs = document.querySelector('nav[aria-label="Tabs"]');
+  // On click
+  tabs.addEventListener('click', replaceImagesDelayed);
 }, 3000);
+
+async function replaceImagesDelayed() {
+  setTimeout(replaceImages, 250);
+}
+
+// TODO remove, this is just for testing
+setInterval( async () => {
+  replaceImages();
+}, 2000);
 
 // Listen for changes to the local storage for places-to-show every few seconds
 var cachedPlacesToShow;
