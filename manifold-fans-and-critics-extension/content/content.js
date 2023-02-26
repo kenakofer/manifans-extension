@@ -117,7 +117,12 @@ async function replaceImages() {
 
     // Create a new element for the icon
     const iconDiv = document.createElement('div');
-    iconDiv.classList.add('example-icon');
+    // Add the smaller icon class if the image is less than 28 px wide
+    if (image.width < 28) {
+      iconDiv.classList.add('small-finger-icon');
+    } else {
+      iconDiv.classList.add('finger-icon');
+    }
     wrapper.appendChild(iconDiv); // add the icon to the wrapper
 
     // Create a new element for the hover text
@@ -174,10 +179,10 @@ async function replaceImages() {
       // Create a new link to this market
       const link = document.createElement('a');
       link.href = permMarkets[position.marketId].url;
-      link.target = '_blank';
+      // link.target = '_blank'; // open in a new tab
       // add the class fan-link
       link.classList.add('hover-link');
-      link.textContent = permMarkets[position.marketId].fanString + " #" + position.place +" ";
+      link.textContent = permMarkets[position.marketId].fanString + "'s #" + position.place +" ";
       if (position.direction == 'YES') {
         link.textContent += 'Fan!';
         link.classList.add('fan-link');
@@ -191,7 +196,7 @@ async function replaceImages() {
           link.textContent = '🌶️ ' + link.textContent;
         }
       }
-      if (position.direction != 'YES' && !criticSeparator) {
+      if (position.direction != 'YES' && !criticSeparator && yesEntries > 0) {
         criticSeparator = true;
         link.style.marginTop = '10px';
       }
