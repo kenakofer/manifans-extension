@@ -4,6 +4,8 @@ PERM_MARKETS_KEY = EXTENSION_PREFIX + 'perm-markets';
 USERNAME_TO_TO_POSITIONS_KEY = EXTENSION_PREFIX + 'user-to-markets';
 PLACES_TO_SHOW_KEY = EXTENSION_PREFIX + 'places-to-show';
 
+LOAD_STATUS_KEY = EXTENSION_PREFIX + 'load-status';
+
 // On load, run this async
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -36,6 +38,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.log(PLACES_TO_SHOW_KEY + ": " + value);
     });
 });
+
+// Set the load-status progress bar from storage every 2 seconds
+setInterval(setLoadStatusFromStorage, 2000);
+
+async function setLoadStatusFromStorage() {
+    result = await get(LOAD_STATUS_KEY);
+    if (result) {
+        console.log('load-status loading at ' + result);
+        document.querySelector('#load-status').value = result.percent;
+        document.querySelector('#load-status').style.display = result.display;
+        document.querySelector('#load-status-label').innerHTML = result.message;
+    }
+}
+
 
 // Every 2 seconds, run setSliderValueFromStorage
 setInterval(setSliderValueFromStorage, 2000);

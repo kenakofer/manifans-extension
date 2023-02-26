@@ -3,7 +3,7 @@ Browser extension for Manifold Markets, displaying digital flair on users that h
 
 ### TODO
 
- - Move a lot of stuff into the background
+ - Make sure it looks good in dark mode
  - Test from scratch
  - Solve the disappearing problem on the Positions tab
  - Refreshing user to top positions
