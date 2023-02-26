@@ -2,6 +2,10 @@ EXTENSION_PREFIX = 'manifold-fans-and-critics-extension_';
 PERM_MARKETS_KEY = EXTENSION_PREFIX + 'perm-markets';
 USERNAME_TO_TO_POSITIONS_KEY = EXTENSION_PREFIX + 'user-to-markets';
 PLACES_TO_SHOW_KEY = EXTENSION_PREFIX + 'places-to-show';
+UPDATE_NOW_KEY = EXTENSION_PREFIX + 'update-now';
+TIME_OF_LAST_UPDATE_KEY = EXTENSION_PREFIX + 'time-of-last-update';
+RELOAD_AFTER_SECONDS = 10 * 60; // 10 minutes
+
 NECESSARY_MARKET_KEYS = ['url', 'fanString'];
 
 LOAD_STATUS_KEY = EXTENSION_PREFIX + 'load-status';
@@ -38,11 +42,22 @@ setInterval(async () => {
 async function fillInMissingData() {
     console.log("Checking our stored data");
     var permMarkets = await getJson(PERM_MARKETS_KEY);
+    var userNameToTopPositions = await getJson(USERNAME_TO_TO_POSITIONS_KEY);
+
+    // Check if update-now is set, or if time of last update is more than 1 hour ago
+    var timeOfLastUpdate = await get(TIME_OF_LAST_UPDATE_KEY);
+    var updateNow = await get(UPDATE_NOW_KEY);
+    if (updateNow || !timeOfLastUpdate || (Date.now() - timeOfLastUpdate) > 1000 * RELOAD_AFTER_SECONDS) {
+        // Invalidate the variables, but not the storage
+        permMarkets = null;
+        userNameToTopPositions = null;
+        store(UPDATE_NOW_KEY, false); // Message received, reset the flag
+    }
+
     if (!permMarkets) {
         console.log('Perm markets not found in storage, fetching from API...');
         permMarkets = await reloadMarkets();
     }
-    var userNameToTopPositions = await getJson(USERNAME_TO_TO_POSITIONS_KEY);
     if (permMarkets && !userNameToTopPositions) {
         await buildUserNameToTopPositions(TOP_SPOTS_TO_LOAD, permMarkets);
     }
@@ -51,7 +66,7 @@ async function fillInMissingData() {
         store(LOAD_STATUS_KEY, {
             percent: 1.0,
             display: "inline-block",
-            message: "All markets up to date."});
+            message: ""});
     }
 }
 
@@ -102,7 +117,7 @@ async function buildUserNameToTopPositions(spots, permMarkets) {
             store(LOAD_STATUS_KEY, {
                 percent: m / market_ids.length,
                 display: "inline-block",
-                message: "Fetching data for " + m + "/" + market_ids.length + " markets"});
+                message: "Fetching data for " + m + "/" + market_ids.length + " permanent markets"});
             console.log("Fetching positions for market " + m + "/" + market_ids.length + ": " + market.fanString);
         }
 
@@ -167,6 +182,10 @@ async function buildUserNameToTopPositions(spots, permMarkets) {
         percent: 1.0,
         display: "inline-block",
         message: market_ids.length + " markets updated."});
+    // Update time-of-last-update to now
+    store(TIME_OF_LAST_UPDATE_KEY, new Date().getTime());
+    // Don't update again until the user clicks the button again
+    store(UPDATE_NOW_KEY, false);
 }
 
 //function to reload all market data

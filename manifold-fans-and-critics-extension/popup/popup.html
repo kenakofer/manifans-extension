@@ -13,7 +13,7 @@
         <td> <input id="places-to-show" type="range" min="1" max="5" value="3" class="slider" id="myRange"> <span id="places-to-show-value">3</span> </td>
       </tr>
       <tr>
-        <td><label id="load-status-label">Checking if we need to fetch market data...</label></td>
+        <td><label id="load-status-label">Checking status...</label></td>
         <td><progress id="load-status" value="0" max="1"></progress></td>
       </tr>
       <tr>
@@ -37,7 +37,9 @@
 
     <br />
 
-    <button id="clear-button">Clear cache</button>
+    <button id="update-button">Sync all markets/positions now</button>
+    <!-- Show the time since the most recent sync -->
+    <p id="last-synced">Last synced: <span id="last-synced-time">Checking status...</span></p>
 
     <script src="popup.js"></script>
   </body>
