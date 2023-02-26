@@ -5,6 +5,7 @@ PLACES_TO_SHOW_KEY = EXTENSION_PREFIX + 'places-to-show';
 UPDATE_NOW_KEY = EXTENSION_PREFIX + 'update-now';
 TIME_OF_LAST_UPDATE_KEY = EXTENSION_PREFIX + 'time-of-last-update';
 TIME_OF_LAST_PAGE_LOAD_KEY = EXTENSION_PREFIX + 'time-of-last-page-load';
+BACKGROUND_HEARTBEAT_KEY = EXTENSION_PREFIX + 'background-heartbeat';
 RELOAD_AFTER_SECONDS = 10 * 60; // 10 minutes
 
 NECESSARY_MARKET_KEYS = ['url', 'fanString'];
@@ -19,8 +20,24 @@ const TOP_SPOTS_TO_LOAD = 5; // This is for data processing, not for displaying.
 
 console.log("Starting background");
 
+// Receive message to restart the background script if it's not running:
+chrome.runtime.onMessage.addListener(
+    function(request, sender, sendResponse) {
+        if (request.message === "restart-background-script") {
+            console.log("Restarting background");
+            chrome.runtime.reload();
+        }
+    }
+);
+
+
 let running = false
+store(BACKGROUND_HEARTBEAT_KEY, Date.now());
+
 setInterval(async () => {
+    // Set a heartbeat so that we can tell if the background script is running
+    store(BACKGROUND_HEARTBEAT_KEY, Date.now());
+
     if (running) {
         return;
     }

@@ -8,6 +8,16 @@ TIME_OF_LAST_UPDATE_KEY = EXTENSION_PREFIX + 'time-of-last-update';
 
 LOAD_STATUS_KEY = EXTENSION_PREFIX + 'load-status';
 
+checkIfBackgroundNeedsRestarted();
+// Check if background script needs restarted when popup is opened
+async function checkIfBackgroundNeedsRestarted() {
+    var lastHeartbeat = get(BACKGROUND_HEARTBEAT_KEY);
+    if (!lastHeartbeat || Date.now() - lastHeartbeat > 60 * 1000) {
+        console.log('Background heartbeat is old! Attempting to restart background...');
+        browser.runtime.sendMessage({message: 'restart-background-script'});
+    }
+}
+
 // Places to show slider
 document.querySelector('#places-to-show').addEventListener('input', async() => {
     const value = document.querySelector('#places-to-show').value;

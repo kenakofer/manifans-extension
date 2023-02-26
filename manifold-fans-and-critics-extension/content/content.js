@@ -3,9 +3,20 @@ PERM_MARKETS_KEY = EXTENSION_PREFIX + 'perm-markets';
 USERNAME_TO_TO_POSITIONS_KEY = EXTENSION_PREFIX + 'user-to-markets';
 PLACES_TO_SHOW_KEY = EXTENSION_PREFIX + 'places-to-show';
 TIME_OF_LAST_PAGE_LOAD_KEY = EXTENSION_PREFIX + 'time-of-last-page-load';
+BACKGROUND_HEARTBEAT_KEY = EXTENSION_PREFIX + 'background-heartbeat';
 
 // Set time of last page load to now
 store(TIME_OF_LAST_PAGE_LOAD_KEY, Date.now());
+
+// Check if the background script heartbeat is older than 1 minute, and if so, restart it
+setInterval( async () => {
+  var lastHeartbeat = await get(BACKGROUND_HEARTBEAT_KEY);
+  if (!lastHeartbeat || Date.now() - lastHeartbeat > 60 * 1000) {
+    console.log('Background heartbeat is old! Attempting to restart background...');
+    browser.runtime.sendMessage({message: 'restart-background-script'});
+  }
+}, 30 * 1000);
+
 
 // Listen for clicks on the FIRST nav with aria-label="Tabs", and replace the images when it is clicked
 var tabs = document.querySelector('nav[aria-label="Tabs"]');
@@ -30,31 +41,12 @@ setInterval( async () => {
 // Listen for changes to the local storage for places-to-show every few seconds
 var cachedPlacesToShow;
 setInterval( async () => {
-  const placesToShow = await get(PLACES_TO_SHOW_KEY);
+  var placesToShow = await get(PLACES_TO_SHOW_KEY);
   if (placesToShow && placesToShow !== cachedPlacesToShow) {
     cachedPlacesToShow = placesToShow;
     replaceImages();
   }
 }, 2000);
-
-// This is needed to call async functions from the top level of the content script
-(async () => {
-  var permMarkets = await getJson(PERM_MARKETS_KEY);
-  if (!permMarkets) {
-    console.log('Perm markets not found in storage, fetching from API...');
-    permMarkets = await reloadMarkets();
-  }
-  var userNameToTopPositions = await getJson(USERNAME_TO_TO_POSITIONS_KEY);
-  if (permMarkets && !userNameToTopPositions) {
-    await buildUserNameToTopPositions(topSpotCount, permMarkets);
-    replaceImages();
-  }
-  console.log('Extension done!');
-  console.log(permMarkets);
-  console.log(await getJson(USERNAME_TO_TO_POSITIONS_KEY));
-})();
-
-
 
 async function store(key, value) {
   await browser.storage.local.set({[key]: value}).then(() => {});
@@ -86,8 +78,16 @@ async function replaceImages() {
 
   // Load userNameToTopPositions from local storage
   const userNameToTopPositions = await getJson(USERNAME_TO_TO_POSITIONS_KEY);
+
+  if (!userNameToTopPositions) {
+    console.log('userNameToTopPositions is null (is it still syncing?), skipping replaceImages');
+    return;
+  }
+
   const permMarkets = await getJson(PERM_MARKETS_KEY);
-  const placesToShow = await get(PLACES_TO_SHOW_KEY);
+
+  var placesToShow = await get(PLACES_TO_SHOW_KEY);
+  placesToShow = placesToShow ? placesToShow : 3; // Default slider value is 3
 
   // Select all images with the "my-0" class that are not a child of a div with "group" class
   const images = document.querySelectorAll('.my-0:not(.group img.my-0)');
