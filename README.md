@@ -5,7 +5,6 @@ Browser extension for Manifold Markets, displaying digital flair on users that h
     - Save a userToHTML object for faster replacement
     - Make popup have nicer button
     - Change "chance" and "probability" to "favorable" or "good". Maybe YES and NO as well?
-    - Emojis for non-#1 as well?
     - Some convention for reading a fan string from out of the description
     - It still just sometimes doesn't show on the page, then I refresh and it shows.
     - I'm probably still doing storage horribly wrong.

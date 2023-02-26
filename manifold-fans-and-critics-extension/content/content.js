@@ -20,7 +20,9 @@ setInterval( async () => {
 
 // Listen for clicks on the FIRST nav with aria-label="Tabs", and replace the images when it is clicked
 var tabs = document.querySelector('nav[aria-label="Tabs"]');
-tabs.addEventListener('click', replaceImagesDelayed);
+if (tabs) {
+  tabs.addEventListener('click', replaceImagesDelayed);
+}
 setTimeout(() => {
   console.log('timeout');
   // Only grab the first nav with aria-label="Tabs"
@@ -206,12 +208,23 @@ async function replaceImages() {
         link.classList.add('fan-link');
         if (position.place == 1) {
           emojiColumn.textContent = '🏆';
+        } else {
+          // Insert the image of the star icon
+          const starImage = document.createElement('div');
+          starImage.classList.add('star-image');
+          emojiColumn.appendChild(starImage);
         }
       } else {
         link.textContent += 'Critic';
         link.classList.add('critic-link');
         if (position.place == 1) {
           emojiColumn.textContent = '🌶️';
+        } else {
+
+          // Insert the image of the star icon
+          const frownImage = document.createElement('div');
+          frownImage.classList.add('frown-image');
+          emojiColumn.appendChild(frownImage);
         }
       }
       if (position.direction != 'YES' && !criticSeparator && yesEntries > 0) {

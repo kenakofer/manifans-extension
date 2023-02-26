@@ -44,3 +44,26 @@
 .critic-link {
   color: #FFC2C5
 }
+
+.star-image {
+  width: 15px;
+  height: 15px;
+  background-size: cover;
+  /* partially transparent */
+  opacity: 0.45;
+  /* vertically center */
+  display: flex;
+  align-items: center;
+  background-image: url('star.png');
+}
+.frown-image {
+  width: 15px;
+  height: 15px;
+  background-size: cover;
+  /* partially transparent */
+  opacity: 0.55;
+  /* vertically center */
+  display: flex;
+  align-items: center;
+  background-image: url('frown.png');
+}
