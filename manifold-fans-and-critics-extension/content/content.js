@@ -12,15 +12,17 @@ const necessaryMarketKeys = ['url', 'fanString'];
 const fetchPositionsUrl = 'https://manifold.markets/api/v0/market/ID/positions';
 
 
-// Listen for clicks on the nav with aria-label="Tabs", and replace the images when it is clicked
-document.addEventListener('DOMContentLoaded', async () => {
-  document.querySelector('[aria-label="Tabs"]').addEventListener('click', () => {
+// Listen for clicks on the FIRST nav with aria-label="Tabs", and replace the images when it is clicked
+setTimeout(() => {
+  console.log('timeout');
+  // Only grab the first nav with aria-label="Tabs"
+  const tabs = document.querySelector('nav[aria-label="Tabs"]');
+  tabs.addEventListener('click', () => {
     // Wait for the tab to load
-    setTimeout(() => {
-      replaceImages();
-    }, 250);
+    console.log('clicked');
+    setTimeout(replaceImages, 250);
   });
-});
+}, 3000);
 
 // Listen for changes to the local storage for places-to-show every few seconds
 var cachedPlacesToShow;
@@ -71,11 +73,9 @@ async function getJson(key) {
 
 // Replace the images once the page has loaded
 window.onload = () => {
+  console.log('Window loaded');
   replaceImages();
 };
-document.addEventListener('DOMContentLoaded', async () => {
-  replaceImages();
-});
 
 async function replaceImages() {
   console.log("Replacing images...");
@@ -207,7 +207,7 @@ async function replaceImages() {
 
     // Hide the icon if there are no entries
     if (yesEntries + noEntries == 0) {
-      console.log('Skipping image with username', imageUsername, 'because there are no entries after filtering');
+      // console.log('Skipping image with username', imageUsername, 'because there are no entries after filtering');
       iconDiv.style.display = 'none';
       continue;
     }
