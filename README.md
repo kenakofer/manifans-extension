@@ -3,6 +3,7 @@ Browser extension for Manifold Markets, displaying digital flair on users that h
 
 ### TODO
 
+ - Sometimes the events don't get set up, and the images don't get replaced
  - Solve the disappearing problem on the Positions tab
  - Refreshing user to top positions
  - Refreshing permanent market list

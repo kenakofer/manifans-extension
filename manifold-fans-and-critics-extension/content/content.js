@@ -136,13 +136,46 @@ async function replaceImages() {
 
 
     var criticSeparator = false;
-    var totalEntries = 0;
+    var yesEllided = 0;
+    var noEllided = 0;
+    var noEntries = 0;
+    var yesEntries = 0;
+
+    var yesEllipsis = null;
+    var noEllipsis = null;
+
     userNameToTopPositions[imageUsername].forEach((position, i) => {
       if (position.place > placesToShow) {
         // console.log('Skipping position', position, 'because it is not in the top', placesToShow);
         return;
       }
-      totalEntries++;
+      if (position.direction == 'YES') {
+        if (position.place > 1 && yesEntries >= 10) {
+          yesEllided++;
+          // Create the ellipsis element if it doesn't exist
+          if (!yesEllipsis) {
+            yesEllipsis = document.createElement('span');
+            yesEllipsis.classList.add('ellipsis');
+            hoverText.appendChild(yesEllipsis);
+          }
+          yesEllipsis.textContent = ' +' + yesEllided + " more...";
+          return;
+        }
+        yesEntries++;
+      } else {
+        if (position.place > 1 && noEntries >= 10) {
+          noEllided++;
+          // Create the ellipsis element if it doesn't exist
+          if (!noEllipsis) {
+            noEllipsis = document.createElement('span');
+            noEllipsis.classList.add('ellipsis');
+            hoverText.appendChild(noEllipsis);
+          }
+          noEllipsis.textContent = ' +' + noEllided + " more...";
+          return;
+        }
+        noEntries++;
+      }
 
       // Create a new link to this market
       const link = document.createElement('a');
@@ -174,7 +207,7 @@ async function replaceImages() {
     });
 
     // Hide the icon if there are no entries
-    if (totalEntries == 0) {
+    if (yesEntries + noEntries == 0) {
       console.log('Skipping image with username', imageUsername, 'because there are no entries after filtering');
       iconDiv.style.display = 'none';
       continue;
