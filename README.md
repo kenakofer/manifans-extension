@@ -2,6 +2,7 @@
 Browser extension for Manifold Markets, displaying digital flair on users that hold large positions in permanent markets/stocks.
 
 ### TODO
+    - Save a userToHTML object for faster replacement
     - Make popup have some style (match manifold colors?)
     - Change "chance" and "probability" to "favorable" or "good". Maybe YES and NO as well?
     - Emojis for non-#1 as well?

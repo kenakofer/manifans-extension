@@ -129,11 +129,11 @@ async function replaceImages() {
     wrapper.appendChild(iconDiv); // add the icon to the wrapper
 
     // Create a new element for the hover text
-    const hoverText = document.createElement('div');
-    hoverText.classList.add('example-hover-text');
+    const hoverTextTable = document.createElement('table');
+    hoverTextTable.classList.add('example-hover-text');
 
     // Add the hover text to the wrapper
-    wrapper.appendChild(hoverText);
+    wrapper.appendChild(hoverTextTable);
 
 
 
@@ -158,7 +158,7 @@ async function replaceImages() {
           if (!yesEllipsis) {
             yesEllipsis = document.createElement('span');
             yesEllipsis.classList.add('ellipsis');
-            hoverText.appendChild(yesEllipsis);
+            hoverTextTable.appendChild(yesEllipsis);
           }
           yesEllipsis.textContent = ' +' + yesEllided + " more...";
           return;
@@ -171,7 +171,7 @@ async function replaceImages() {
           if (!noEllipsis) {
             noEllipsis = document.createElement('span');
             noEllipsis.classList.add('ellipsis');
-            hoverText.appendChild(noEllipsis);
+            hoverTextTable.appendChild(noEllipsis);
           }
           noEllipsis.textContent = ' +' + noEllided + " more...";
           return;
@@ -182,30 +182,43 @@ async function replaceImages() {
       // Create a new link to this market
       const link = document.createElement('a');
       link.href = permMarkets[position.marketId].url;
+      link.classList.add('hover-link');
+
+      // Create a new row in the hover text
+      const hoverTextRow = document.createElement('tr');
+      const emojiColumn = document.createElement('td');
+      const textColumn = document.createElement('td');
+      link.appendChild(textColumn);
+      hoverTextRow.appendChild(emojiColumn);
+      hoverTextRow.appendChild(textColumn);
+      textColumn.appendChild(link);
+      hoverTextTable.appendChild(hoverTextRow);
+
+      // link.appendChild(emojiColumn);
+
+      // hoverTextRow.appendChild(link);
+
       // link.target = '_blank'; // open in a new tab
       // add the class fan-link
-      link.classList.add('hover-link');
       link.textContent = permMarkets[position.marketId].fanString + "'s #" + position.place +" ";
       if (position.direction == 'YES') {
         link.textContent += 'Fan!';
         link.classList.add('fan-link');
         if (position.place == 1) {
-          link.textContent = '🏆 ' + link.textContent;
+          emojiColumn.textContent = '🏆';
         }
       } else {
         link.textContent += 'Critic';
         link.classList.add('critic-link');
         if (position.place == 1) {
-          link.textContent = '🌶️ ' + link.textContent;
+          emojiColumn.textContent = '🌶️';
         }
       }
       if (position.direction != 'YES' && !criticSeparator && yesEntries > 0) {
         criticSeparator = true;
         link.style.marginTop = '10px';
+        emojiColumn.style.paddingTop = '10px';
       }
-
-      // Add the link to the hover text
-      hoverText.appendChild(link);
     });
 
     // Hide the icon if there are no entries
@@ -216,31 +229,31 @@ async function replaceImages() {
     }
 
     iconDiv.addEventListener('mouseover', () => {
-      hoverText.style.display = 'block';
-      hoverText.style.zIndex = '10000';
+      hoverTextTable.style.display = 'block';
+      hoverTextTable.style.zIndex = '10000';
       iconDiv.style.zIndex = '10001';
     });
 
     iconDiv.addEventListener('mouseleave', () => {
-      hoverText.style.display = 'none';
-      hoverText.style.zIndex = '9998';
+      hoverTextTable.style.display = 'none';
+      hoverTextTable.style.zIndex = '9998';
       iconDiv.style.zIndex = '9999';
     });
 
     // add event listeners to the market info div to keep it displayed when the user hovers over it
-    hoverText.addEventListener('mouseenter', () => {
-      hoverText.style.display = 'block';
-      hoverText.style.zIndex = '10000';
+    hoverTextTable.addEventListener('mouseenter', () => {
+      hoverTextTable.style.display = 'block';
+      hoverTextTable.style.zIndex = '10000';
       iconDiv.style.zIndex = '10001';
     });
-    hoverText.addEventListener('mouseleave', () => {
-      hoverText.style.display = 'none';
-      hoverText.style.zIndex = '9998';
+    hoverTextTable.addEventListener('mouseleave', () => {
+      hoverTextTable.style.display = 'none';
+      hoverTextTable.style.zIndex = '9998';
       iconDiv.style.zIndex = '9999';
     });
 
     // prevent the event from bubbling up to the parent img element
-    hoverText.addEventListener('mouseover', (event) => {
+    hoverTextTable.addEventListener('mouseover', (event) => {
       event.stopPropagation();
     });
   }
