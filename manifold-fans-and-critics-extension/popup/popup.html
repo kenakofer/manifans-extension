@@ -2,45 +2,38 @@
   <head>
     <meta charset="utf-8">
     <title>Manifold Fans and Critics Settings</title>
+    <link rel="stylesheet" href="popup.css">
   </head>
   <body>
-    <h1>Manifold Fans and Critics Settings</h1>
+    <!-- Title with a github icon link to the repo -->
+
+    <h1>Manifold Fans and Critics Settings <a href="https://github.com/kenakofer/manifold-fans-and-critics-extension" target="_blank"><img class="github-icon" src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="Github icon" width="32" height="32"></a></h1>
 
     <!-- Table with labels on the left and inputs/displays on the right -->
     <table>
       <tr>
-        <td> <label for="places-to-show">How many top spots to show for each market</label> </td>
+        <td> <label for="places-to-show">Top spots to award:</label> </td>
         <td> <input id="places-to-show" type="range" min="1" max="5" value="3" class="slider" id="myRange"> <span id="places-to-show-value">3</span> </td>
       </tr>
       <tr>
-        <td><label id="load-status-label">Checking status...</label></td>
-        <td><progress id="load-status" value="0" max="1"></progress></td>
+        <td> <p id="last-synced">Last sync: <br /><span id="last-synced-time">Checking status...</span></p> </td>
+        <td> <button id="update-button">Sync all markets/positions now</button> </td>
       </tr>
       <tr>
-        <td></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td></td>
-        <td></td>
+        <!-- A div inside div progress bar, and a label overlaid -->
+        <td colspan="2">
+          <div id="load-status-outer-bar">
+            <div id="load-status-inner-bar"></div>
+            <label id="load-status-label">Checking status...</label>
+          </div>
+        </td>
       </tr>
     </table>
 
     <!-- Progress bar with an overlaid label -->
 
 
-
-
-    <br />
-
-    <button id="update-button">Sync all markets/positions now</button>
-    <!-- Show the time since the most recent sync -->
-    <p id="last-synced">Last synced: <span id="last-synced-time">Checking status...</span></p>
-    <p>A page refresh is required for changes to be visible.</p>
+    <p class="refresh-note">A page refresh is required for changes to be visible.</p>
 
     <script src="popup.js"></script>
   </body>

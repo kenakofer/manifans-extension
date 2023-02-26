@@ -1,0 +1,69 @@
+/* Style page with sans serif font */
+body {
+  font-family: sans-serif;
+  color: #2D2D57;
+  text-align: center;
+}
+
+h1 {
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin-bottom: 0;
+    color: #4338CA;
+    /* vertically center */
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.github-icon {
+    width: 30px;
+    height: 30px;
+    /* align right */
+    margin-left: auto;
+
+    /* vertically center */
+    display: flex;
+    align-items: center;
+}
+
+.refresh-note {
+    font-style: italic;
+    font-size: 0.8rem;
+    text-align: left;
+}
+
+#load-status-label {
+    width: 100%;
+    text-align: center;
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+    text-shadow: 1px 2px black;
+}
+
+#load-status-outer-bar {
+    position: relative;
+    width: 100%;
+    height: 25px;
+    background-color: #959595;
+    border-radius: 5px;
+    border: solid 1px #B1B1C7;
+
+}
+
+#load-status-inner-bar {
+    width: 30%;
+    height: 25px;
+    background-color: #4338CA;
+    border-radius: 5px;
+}

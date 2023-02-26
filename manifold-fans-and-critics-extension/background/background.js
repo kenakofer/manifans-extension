@@ -67,7 +67,7 @@ async function fillInMissingData() {
         store(LOAD_STATUS_KEY, {
             percent: 1.0,
             display: "inline-block",
-            message: "Will not sync while user is not active on Manifold"});
+            message: "Sync inactive while not browsing Manifold"});
             return;
     }
 
@@ -99,7 +99,7 @@ async function fillInMissingData() {
         store(LOAD_STATUS_KEY, {
             percent: 1.0,
             display: "inline-block",
-            message: ""});
+            message: Object.keys(permMarkets).length + " markets, " + Object.keys(userNameToTopPositions).length + " users updated."});
     }
 }
 

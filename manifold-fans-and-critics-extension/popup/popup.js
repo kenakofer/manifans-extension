@@ -39,8 +39,8 @@ setInterval(setLoadStatusFromStorage, 2000);
 async function setLoadStatusFromStorage() {
     result = await get(LOAD_STATUS_KEY);
     if (result) {
-        document.querySelector('#load-status').value = result.percent;
-        document.querySelector('#load-status').style.display = result.display;
+        document.querySelector('#load-status-inner-bar').style.width = Math.round(result.percent * 100) + '%';
+        document.querySelector('#load-status-outer-bar').style.display = result.display;
         document.querySelector('#load-status-label').innerHTML = result.message;
     }
 }
