@@ -104,13 +104,13 @@ async function replaceImages() {
 
     // Skip if the username is not in userNameToTopPositions
     if (!userNameToTopPositions[imageUsername]) {
-      console.log('Skipping image with username', imageUsername);
+      // console.log('Skipping image with username', imageUsername);
       continue;
     }
 
     // Skip if the image has already been replaced
     if (image.classList.contains('replaced-by-extension')) {
-      console.log('Skipping image with username', imageUsername, 'because it has already been replaced');
+      // console.log('Skipping image with username', imageUsername, 'because it has already been replaced');
       continue;
     }
     image.classList.add('replaced-by-extension');
@@ -139,7 +139,7 @@ async function replaceImages() {
     var totalEntries = 0;
     userNameToTopPositions[imageUsername].forEach((position, i) => {
       if (position.place > placesToShow) {
-        console.log('Skipping position', position, 'because it is not in the top', placesToShow);
+        // console.log('Skipping position', position, 'because it is not in the top', placesToShow);
         return;
       }
       totalEntries++;
@@ -154,9 +154,15 @@ async function replaceImages() {
       if (position.direction == 'YES') {
         link.textContent += 'Fan!';
         link.classList.add('fan-link');
+        if (position.place == 1) {
+          link.textContent = '🏆 ' + link.textContent;
+        }
       } else {
         link.textContent += 'Critic';
         link.classList.add('critic-link');
+        if (position.place == 1) {
+          link.textContent = '🌶️ ' + link.textContent;
+        }
       }
       if (position.direction != 'YES' && !criticSeparator) {
         criticSeparator = true;
