@@ -31,6 +31,12 @@ document.querySelector('#places-to-show').addEventListener('input', async() => {
 document.querySelector('#update-button').addEventListener('click', () => {
     store(UPDATE_NOW_KEY, true);
     document.querySelector('#load-status-label').innerHTML = 'Getting ready to sync...';
+    // Also store in LOAD_STATUS_KEY
+    store(LOAD_STATUS_KEY, {
+        percent: 0,
+        display: 'block',
+        message: 'Getting ready to sync...'
+    });
 });
 
 // Set the load-status progress bar from storage every 2 seconds

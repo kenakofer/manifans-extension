@@ -7,6 +7,8 @@ TIME_OF_LAST_UPDATE_KEY = EXTENSION_PREFIX + 'time-of-last-update';
 TIME_OF_LAST_PAGE_LOAD_KEY = EXTENSION_PREFIX + 'time-of-last-page-load';
 BACKGROUND_HEARTBEAT_KEY = EXTENSION_PREFIX + 'background-heartbeat';
 RELOAD_AFTER_SECONDS = 10 * 60; // 10 minutes
+MARKET_FETCH_BATCH_SIZE = 5;
+DIRECTIONS = ['YES', 'NO'];
 
 NECESSARY_MARKET_KEYS = ['url', 'fanString'];
 
@@ -99,7 +101,7 @@ async function fillInMissingData() {
         store(LOAD_STATUS_KEY, {
             percent: 1.0,
             display: "inline-block",
-            message: Object.keys(permMarkets).length + " markets, " + Object.keys(userNameToTopPositions).length + " users updated."});
+            message: Object.keys(permMarkets).length + " markets, " + Object.keys(userNameToTopPositions).length + " users"});
     }
 }
 
@@ -135,61 +137,69 @@ function insertSorted(array, position, key) {
     }
 }
 
+async function getTopUsersInMarket(market_id, spots, userNameToTopPositions, permMarkets) {
+    console.log("Fetching positions for market " + market_id);
+    const market = permMarkets[market_id];
+
+    var best = { YES: [], NO: [] };
+    for (var i = 0; i < spots; i++) {
+        // Initialize position.totalShares.YES and position.totalShares.NO to 0
+        best.YES.push({ totalShares: { YES: 0 } });
+        best.NO.push({ totalShares: { NO: 0 } });
+    }
+
+    // Wait for the response before continuing
+    const positionsResponse = await fetch(getPositionsUrl(market_id));
+
+    // Wait for the response to be parsed before continuing
+    const positions = await positionsResponse.json();
+
+    positions.forEach((position) => {
+        DIRECTIONS.forEach((direction) => {
+            // Check if the position has more shares than the lowest position in the best array
+            if (best[direction][spots - 1].totalShares[direction] < position.totalShares[direction]) {
+                insertSorted(best[direction], position, direction);
+            }
+        });
+    });
+
+    // Now we have the top positions for each side of the market
+    // Add these top users to the userNameToTopPositions object
+    DIRECTIONS.forEach((direction) => {
+        // Loop through best[direction], and also keep track of the index with i
+        best[direction].forEach((position, i) => {
+            userNameToTopPositions[position.userUsername] = userNameToTopPositions[position.userUsername] || [];
+            userNameToTopPositions[position.userUsername].push({
+                marketId: market_id,
+                place: i + 1,
+                direction: direction
+            });
+        });
+    });
+}
+
 async function buildUserNameToTopPositions(spots, permMarkets) {
     console.log('Building username to top positions...');
     console.log(permMarkets);
     const userNameToTopPositions = {};
-    const directions = ['YES', 'NO'];
 
-    // Loop through each key in the permMarkets object with a standard for loop to accomodate async/await. This is not an array!
+
     const market_ids = Object.keys(permMarkets);
-    for (var m = 0; m < market_ids.length; m++) {
-        const market_id = market_ids[m];
-        const market = permMarkets[market_id];
-        if (m % 10 == 0) {
+    for (var batch = 0; batch < market_ids.length; batch += MARKET_FETCH_BATCH_SIZE) {
+        var batchedFetches = [];
+        for (var m = 0; batch+m < market_ids.length && m < MARKET_FETCH_BATCH_SIZE; m++) {
+            const market_id = market_ids[batch + m];
+            batchedFetches.push(getTopUsersInMarket(market_id, spots, userNameToTopPositions, permMarkets));
+        };
+        console.log("Running batch " + batch + "/" + market_ids.length);
+        if (batch % 5 == 0) {
             store(LOAD_STATUS_KEY, {
-                percent: m / market_ids.length,
+                percent: batch / market_ids.length,
                 display: "inline-block",
-                message: "Fetching data for " + m + "/" + market_ids.length + " permanent markets"});
-            console.log("Fetching positions for market " + m + "/" + market_ids.length + ": " + market.fanString);
+                message: "Syncing market data (" + batch + "/" + market_ids.length + ")"});
         }
-
-        var best = { YES: [], NO: [] };
-        for (var i = 0; i < spots; i++) {
-            // Initialize position.totalShares.YES and position.totalShares.NO to 0
-            best.YES.push({ totalShares: { YES: 0 } });
-            best.NO.push({ totalShares: { NO: 0 } });
-        }
-
-        // Wait for the response before continuing
-        const positionsResponse = await fetch(getPositionsUrl(market_id));
-
-        // Wait for the response to be parsed before continuing
-        const positions = await positionsResponse.json();
-
-        positions.forEach((position) => {
-            directions.forEach((direction) => {
-                // Check if the position has more shares than the lowest position in the best array
-                if (best[direction][spots - 1].totalShares[direction] < position.totalShares[direction]) {
-                    insertSorted(best[direction], position, direction);
-                }
-            });
-        });
-
-        // Now we have the top positions for each side of the market
-        // Add these top users to the userNameToTopPositions object
-        directions.forEach((direction) => {
-            // Loop through best[direction], and also keep track of the index with i
-            best[direction].forEach((position, i) => {
-                userNameToTopPositions[position.userUsername] = userNameToTopPositions[position.userUsername] || [];
-                userNameToTopPositions[position.userUsername].push({
-                    marketId: market_id,
-                    place: i + 1,
-                    direction: direction
-                });
-            });
-        });
-    };
+        await Promise.all(batchedFetches);
+    }
 
     // For each key in userNameToTopPositions, sort the array by direction and then place
     console.log("Sorting positions for each username...");
@@ -209,12 +219,6 @@ async function buildUserNameToTopPositions(spots, permMarkets) {
     console.log("Saving positions to local storage.");
     store(USERNAME_TO_TO_POSITIONS_KEY, JSON.stringify(userNameToTopPositions));
 
-
-    // Update status to done
-    store(LOAD_STATUS_KEY, {
-        percent: 1.0,
-        display: "inline-block",
-        message: market_ids.length + " markets updated."});
     // Update time-of-last-update to now
     store(TIME_OF_LAST_UPDATE_KEY, new Date().getTime());
     // Don't update again until the user clicks the button again
