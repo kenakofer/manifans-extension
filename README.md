@@ -4,7 +4,6 @@ Browser extension for Manifold Markets, displaying digital flair on users that h
 ### TODO
     - Make popup have some style (match manifold colors?)
     - Change "chance" and "probability" to "favorable" or "good". Maybe YES and NO as well?
-    - Reduce font size
     - Emojis for non-#1 as well?
     - Some convention for reading a fan string from out of the description
     - It still just sometimes doesn't show on the page, then I refresh and it shows.
