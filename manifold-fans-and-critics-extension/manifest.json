@@ -44,13 +44,10 @@
         "content/content.css"
       ],
       "js": [
-        "content/content.js",
-        "constants.js"
+        "content/content.js"
       ],
       "run_at": "document_end"
     }
   ],
-  "web_accessible_resources": [
-    "constants.js"
-  ]
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
 }

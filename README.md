@@ -6,6 +6,5 @@ Browser extension for Manifold Markets, displaying digital flair on users that h
  - Solve the disappearing problem on the Positions tab
  - Refreshing user to top positions
  - Refreshing permanent market list
- - Add configuration to limit number of places that get displayed
  - Prevent showing the finger on tiny profile images
  - Test on Chrome

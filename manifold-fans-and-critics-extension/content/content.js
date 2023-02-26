@@ -1,8 +1,16 @@
-const EXTENSION_PREFIX = 'manifold-fans-and-critics-extension_';
-const PERM_MARKETS_KEY = EXTENSION_PREFIX + 'perm-markets';
-const USERNAME_TO_TO_POSITIONS_KEY = EXTENSION_PREFIX + 'user-to-markets';
+EXTENSION_PREFIX = 'manifold-fans-and-critics-extension_';
+PERM_MARKETS_KEY = EXTENSION_PREFIX + 'perm-markets';
+USERNAME_TO_TO_POSITIONS_KEY = EXTENSION_PREFIX + 'user-to-markets';
+PLACES_TO_SHOW_KEY = EXTENSION_PREFIX + 'places-to-show';
+
 
 // Log the current URL
+
+(async () => {
+  await store('test', 'aoeusnth');
+  console.log(await get('test'));
+})();
+
 console.log('Current page URL:', window.location.href);
 
 // const fetchMarketsUrl = 'https://manifold.markets/api/v0/markets?limit=1000';
@@ -14,61 +22,99 @@ const necessaryMarketKeys = ['url', 'fanString'];
 // The template for fetchPositionsUrl takes a market id
 const fetchPositionsUrl = 'https://manifold.markets/api/v0/market/ID/positions';
 
+
 // Listen for clicks on the nav with aria-label="Tabs", and replace the images when it is clicked
 document.querySelector('[aria-label="Tabs"]').addEventListener('click', () => {
-  // Wait for the page to load
+  // Wait for the tab to load
   setTimeout(() => {
     replaceImages();
   }, 250);
 });
 
+// Listen for changes to the local storage for places-to-show every few seconds
+var cachedPlacesToShow;
+setInterval( async () => {
+  const placesToShow = await get(PLACES_TO_SHOW_KEY);
+  if (placesToShow && placesToShow !== cachedPlacesToShow) {
+    cachedPlacesToShow = placesToShow;
+    replaceImages();
+  }
+}, 2000);
+
 // This is needed to call async functions from the top level of the content script
 (async () => {
-  permMarkets = JSON.parse(localStorage.getItem(PERM_MARKETS_KEY));
-
+  var permMarkets = await getJson(PERM_MARKETS_KEY);
   if (!permMarkets) {
-    console.log('Perm markets not found in local storage, fetching from API...');
+    console.log('Perm markets not found in storage, fetching from API...');
     permMarkets = await reloadMarkets();
   }
-  if (permMarkets && !localStorage.getItem(USERNAME_TO_TO_POSITIONS_KEY)) {
+  var userNameToTopPositions = await getJson(USERNAME_TO_TO_POSITIONS_KEY);
+  if (permMarkets && !userNameToTopPositions) {
     await buildUserNameToTopPositions(topSpotCount, permMarkets);
     replaceImages();
   }
   console.log('Extension done!');
   console.log(permMarkets);
-  console.log(JSON.parse(localStorage.getItem(USERNAME_TO_TO_POSITIONS_KEY)));
+  console.log(await getJson(USERNAME_TO_TO_POSITIONS_KEY));
 })();
+
+
+
+async function store(key, value) {
+  await browser.storage.local.set({[key]: value}).then(() => {});
+}
+
+async function get(key) {
+  const result = await browser.storage.local.get(key);
+  return result[key];
+}
+
+async function getJson(key) {
+  var string = await get(key);
+  if (string) {
+    return JSON.parse(string);
+  } else {
+    return null;
+  }
+}
 
 // Replace the images once the page has loaded
 window.onload = () => {
   replaceImages();
 };
 
-function replaceImages() {
+async function replaceImages() {
   console.log("Replacing images...");
+
+
+  // Load userNameToTopPositions from local storage
+  const userNameToTopPositions = await getJson(USERNAME_TO_TO_POSITIONS_KEY);
+  const permMarkets = await getJson(PERM_MARKETS_KEY);
+  const placesToShow = await get(PLACES_TO_SHOW_KEY);
 
   // Select all images with the "example-class" class
   const images = document.querySelectorAll('.my-0');
 
-  // Loop through each image and add an overlay icon
-  images.forEach((image) => {
+  // Loop through each image using an async function:
+  for (let i = 0; i < images.length; i++) {
+    const image = images[i];
+
     // Get the alt text on the image, and remove the word avatar from the end
     const imageUsername = image.alt.replace('avatar', '').trim();
 
-    // Load userNameToTopPositions from local storage
-    const userNameToTopPositions = JSON.parse(localStorage.getItem(USERNAME_TO_TO_POSITIONS_KEY));
-    const permMarkets = JSON.parse(localStorage.getItem(PERM_MARKETS_KEY));
-
     // Skip if the username is not in userNameToTopPositions
     if (!userNameToTopPositions[imageUsername]) {
-      return;
+      console.log('Skipping image with username', imageUsername);
+      continue;
     }
 
     // Skip if the image has already been replaced
     if (image.classList.contains('replaced-by-extension')) {
-      return;
+      console.log('Skipping image with username', imageUsername, 'because it has already been replaced');
+      continue;
     }
     image.classList.add('replaced-by-extension');
+
 
     const wrapper = document.createElement('div');
     wrapper.style.position = 'relative'; // set position to relative to position the icon correctly
@@ -83,7 +129,50 @@ function replaceImages() {
     // Create a new element for the hover text
     const hoverText = document.createElement('div');
     hoverText.classList.add('example-hover-text');
+
+    // Add the hover text to the wrapper
     wrapper.appendChild(hoverText);
+
+
+
+    var criticSeparator = false;
+    var totalEntries = 0;
+    userNameToTopPositions[imageUsername].forEach((position, i) => {
+      if (position.place > placesToShow) {
+        console.log('Skipping position', position, 'because it is not in the top', placesToShow);
+        return;
+      }
+      totalEntries++;
+
+      // Create a new link to this market
+      const link = document.createElement('a');
+      link.href = permMarkets[position.marketId].url;
+      link.target = '_blank';
+      // add the class fan-link
+      link.classList.add('hover-link');
+      link.textContent = permMarkets[position.marketId].fanString + " #" + position.place +" ";
+      if (position.direction == 'YES') {
+        link.textContent += 'Fan!';
+        link.classList.add('fan-link');
+      } else {
+        link.textContent += 'Critic';
+        link.classList.add('critic-link');
+      }
+      if (position.direction != 'YES' && !criticSeparator) {
+        criticSeparator = true;
+        link.style.marginTop = '10px';
+      }
+
+      // Add the link to the hover text
+      hoverText.appendChild(link);
+    });
+
+    // Hide the icon if there are no entries
+    if (totalEntries == 0) {
+      console.log('Skipping image with username', imageUsername, 'because there are no entries after filtering');
+      iconDiv.style.display = 'none';
+      continue;
+    }
 
     iconDiv.addEventListener('mouseover', () => {
       hoverText.style.display = 'block';
@@ -113,32 +202,7 @@ function replaceImages() {
     hoverText.addEventListener('mouseover', (event) => {
       event.stopPropagation();
     });
-
-    var criticSeparator = false;
-    userNameToTopPositions[imageUsername].forEach((position, i) => {
-      // Create a new link to this market
-      const link = document.createElement('a');
-      link.href = permMarkets[position.marketId].url;
-      link.target = '_blank';
-      // add the class fan-link
-      link.classList.add('hover-link');
-      link.textContent = permMarkets[position.marketId].fanString + " #" + position.place +" ";
-      if (position.direction == 'YES') {
-        link.textContent += 'Fan!';
-        link.classList.add('fan-link');
-      } else {
-        link.textContent += 'Critic';
-        link.classList.add('critic-link');
-      }
-      if (position.direction != 'YES' && !criticSeparator) {
-        criticSeparator = true;
-        link.style.marginTop = '10px';
-      }
-
-      // Add the link to the hover text
-      hoverText.appendChild(link);
-    });
-  });
+  }
 }
 
 
@@ -212,7 +276,7 @@ async function buildUserNameToTopPositions(spots, permMarkets) {
 
   //save userNameToTopPositions to local storage
   console.log("Saving positions to local storage.");
-  localStorage.setItem(USERNAME_TO_TO_POSITIONS_KEY, JSON.stringify(userNameToTopPositions));
+  store(USERNAME_TO_TO_POSITIONS_KEY, JSON.stringify(userNameToTopPositions));
 }
 
 // Insert a position into the best array, keeping the array sorted from highest to lowest
@@ -271,7 +335,7 @@ async function reloadMarkets() {
 
   var storageString = JSON.stringify(permMarkets);
   console.log('Size of permMarkets going into storage: ' + storageString.length);
-  localStorage.setItem(PERM_MARKETS_KEY, storageString);
+  await store(PERM_MARKETS_KEY, storageString);
 
   return permMarkets;
 }
