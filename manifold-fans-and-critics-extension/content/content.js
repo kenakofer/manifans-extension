@@ -3,20 +3,9 @@ PERM_MARKETS_KEY = EXTENSION_PREFIX + 'perm-markets';
 USERNAME_TO_TO_POSITIONS_KEY = EXTENSION_PREFIX + 'user-to-markets';
 PLACES_TO_SHOW_KEY = EXTENSION_PREFIX + 'places-to-show';
 
-
-// Log the current URL
-
-(async () => {
-  await store('test', 'aoeusnth');
-  console.log(await get('test'));
-})();
-
-console.log('Current page URL:', window.location.href);
-
-// const fetchMarketsUrl = 'https://manifold.markets/api/v0/markets?limit=1000';
 const permanentGroupID = '2T4mM0N5az2lYcaN5G50';
 const fetchMarketsUrl = 'https://manifold.markets/api/v0/group/by-id/' + permanentGroupID + '/markets';
-const topSpotCount = 5;
+const topSpotCount = 5; // This is for data processing, not for displaying. It should be greater than or equal to the max of places-to-show slider in popup.js
 const necessaryMarketKeys = ['url', 'fanString'];
 
 // The template for fetchPositionsUrl takes a market id
@@ -24,11 +13,13 @@ const fetchPositionsUrl = 'https://manifold.markets/api/v0/market/ID/positions';
 
 
 // Listen for clicks on the nav with aria-label="Tabs", and replace the images when it is clicked
-document.querySelector('[aria-label="Tabs"]').addEventListener('click', () => {
-  // Wait for the tab to load
-  setTimeout(() => {
-    replaceImages();
-  }, 250);
+document.addEventListener('DOMContentLoaded', async () => {
+  document.querySelector('[aria-label="Tabs"]').addEventListener('click', () => {
+    // Wait for the tab to load
+    setTimeout(() => {
+      replaceImages();
+    }, 250);
+  });
 });
 
 // Listen for changes to the local storage for places-to-show every few seconds
@@ -82,6 +73,9 @@ async function getJson(key) {
 window.onload = () => {
   replaceImages();
 };
+document.addEventListener('DOMContentLoaded', async () => {
+  replaceImages();
+});
 
 async function replaceImages() {
   console.log("Replacing images...");
@@ -92,8 +86,8 @@ async function replaceImages() {
   const permMarkets = await getJson(PERM_MARKETS_KEY);
   const placesToShow = await get(PLACES_TO_SHOW_KEY);
 
-  // Select all images with the "example-class" class
-  const images = document.querySelectorAll('.my-0');
+  // Select all images with the "my-0" class that are not a child of a div with "group" class
+  const images = document.querySelectorAll('.my-0:not(.group img.my-0)');
 
   // Loop through each image using an async function:
   for (let i = 0; i < images.length; i++) {
