@@ -5,15 +5,19 @@ PLACES_TO_SHOW_KEY = EXTENSION_PREFIX + 'places-to-show';
 TIME_OF_LAST_PAGE_LOAD_KEY = EXTENSION_PREFIX + 'time-of-last-page-load';
 BACKGROUND_HEARTBEAT_KEY = EXTENSION_PREFIX + 'background-heartbeat';
 
+// Use chrome in chrome, and browser in firefox
+var browser = (window.browser)? window.browser : window.chrome;
+
 // Set time of last page load to now
 store(TIME_OF_LAST_PAGE_LOAD_KEY, Date.now());
+
 
 // Check if the background script heartbeat is older than 1 minute, and if so, restart it
 setInterval( async () => {
   var lastHeartbeat = await get(BACKGROUND_HEARTBEAT_KEY);
   if (!lastHeartbeat || Date.now() - lastHeartbeat > 60 * 1000) {
     console.log('Background heartbeat is old! Attempting to restart background...');
-    browser.runtime.sendMessage({message: 'restart-background-script'});
+    chrome.runtime.sendMessage({message: 'restart-background-script'});
   }
 }, 30 * 1000);
 
@@ -28,7 +32,9 @@ setTimeout(() => {
   // Only grab the first nav with aria-label="Tabs"
   tabs = document.querySelector('nav[aria-label="Tabs"]');
   // On click
-  tabs.addEventListener('click', replaceImagesDelayed);
+  if (tabs) {
+    tabs.addEventListener('click', replaceImagesDelayed);
+  }
 }, 3000);
 
 async function replaceImagesDelayed() {
@@ -51,11 +57,11 @@ setInterval( async () => {
 }, 2000);
 
 async function store(key, value) {
-  await browser.storage.local.set({[key]: value}).then(() => {});
+  await chrome.storage.local.set({[key]: value}).then(() => {});
 }
 
 async function get(key) {
-  const result = await browser.storage.local.get(key);
+  const result = await chrome.storage.local.get(key);
   return result[key];
 }
 

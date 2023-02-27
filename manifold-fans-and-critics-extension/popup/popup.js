@@ -9,13 +9,16 @@ BACKGROUND_HEARTBEAT_KEY = EXTENSION_PREFIX + 'background-heartbeat';
 
 LOAD_STATUS_KEY = EXTENSION_PREFIX + 'load-status';
 
+// Use chrome in chrome, and browser in firefox
+var browser = (window.browser)? window.browser : window.chrome;
+
 checkIfBackgroundNeedsRestarted();
 // Check if background script needs restarted when popup is opened
 async function checkIfBackgroundNeedsRestarted() {
     var lastHeartbeat = get(BACKGROUND_HEARTBEAT_KEY);
     if (!lastHeartbeat || Date.now() - lastHeartbeat > 60 * 1000) {
         console.log('Background heartbeat is old! Attempting to restart background...');
-        browser.runtime.sendMessage({message: 'restart-background-script'});
+        chrome.runtime.sendMessage({message: 'restart-background-script'});
     }
 }
 
@@ -79,11 +82,11 @@ async function setSliderValueFromStorage() {
 
 
 async function store(key, value) {
-  await browser.storage.local.set({[key]: value}).then(() => {});
+  await chrome.storage.local.set({[key]: value}).then(() => {});
 }
 
 async function get(key) {
-  const result = await browser.storage.local.get(key);
+  const result = await chrome.storage.local.get(key);
   if (!result) {
     return null;
   }

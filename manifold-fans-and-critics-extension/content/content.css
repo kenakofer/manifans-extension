@@ -5,6 +5,7 @@
   width: 25px;
   height: 32px;
   background-image: url('foam-hand.png');
+  background-image: url('chrome-extension://__MSG_@@extension_id__/content/foam-hand.png');
   background-size: cover;
   z-index: 9999;
 }
@@ -16,6 +17,7 @@
   width: 22px;
   height: 28px;
   background-image: url('foam-hand.png');
+  background-image: url('chrome-extension://__MSG_@@extension_id__/content/foam-hand.png');
   background-size: cover;
   z-index: 9999;
 }
@@ -55,6 +57,7 @@
   display: flex;
   align-items: center;
   background-image: url('star.png');
+  background-image: url('chrome-extension://__MSG_@@extension_id__/content/star.png');
 }
 .frown-image {
   width: 15px;
@@ -66,4 +69,5 @@
   display: flex;
   align-items: center;
   background-image: url('frown.png');
+  background-image: url('chrome-extension://__MSG_@@extension_id__/content/frown.png');
 }

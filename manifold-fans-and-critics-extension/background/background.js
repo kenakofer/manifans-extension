@@ -20,6 +20,9 @@ FETCH_POSITIONS_URL = 'https://manifold.markets/api/v0/market/ID/positions';
 
 const TOP_SPOTS_TO_LOAD = 5; // This is for data processing, not for displaying. It should be greater than or equal to the max of places-to-show slider in popup.js
 
+// Use chrome in chrome, and browser in firefox
+// var browser = (window.browser)? window.browser : window.chrome;
+
 console.log("Starting background");
 
 // Receive message to restart the background script if it's not running:
@@ -106,11 +109,11 @@ async function fillInMissingData() {
 }
 
 async function store(key, value) {
-    await browser.storage.local.set({ [key]: value }).then(() => { });
+    await chrome.storage.local.set({ [key]: value }).then(() => { });
 }
 
 async function get(key) {
-    const result = await browser.storage.local.get(key);
+    const result = await chrome.storage.local.get(key);
     return result[key];
 }
 
