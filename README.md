@@ -1,4 +1,4 @@
-# manifold-fans-and-critics-extension
+# manifans-extension
 Browser extension for Manifold Markets, displaying digital flair on users that hold large positions in permanent markets/stocks.
 
 To load the extension temporarily for testing:

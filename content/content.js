@@ -1,4 +1,4 @@
-EXTENSION_PREFIX = 'manifold-fans-and-critics-extension_';
+EXTENSION_PREFIX = 'manifans-extension_';
 PERM_MARKETS_KEY = EXTENSION_PREFIX + 'perm-markets';
 USERNAME_TO_TO_POSITIONS_KEY = EXTENSION_PREFIX + 'user-to-markets';
 PLACES_TO_SHOW_KEY = EXTENSION_PREFIX + 'places-to-show';
