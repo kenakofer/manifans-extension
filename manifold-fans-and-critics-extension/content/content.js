@@ -6,7 +6,11 @@ TIME_OF_LAST_PAGE_LOAD_KEY = EXTENSION_PREFIX + 'time-of-last-page-load';
 BACKGROUND_HEARTBEAT_KEY = EXTENSION_PREFIX + 'background-heartbeat';
 
 // Use chrome in chrome, and browser in firefox
-var browser = (window.browser)? window.browser : window.chrome;
+var chrome = chrome;
+try {
+    chrome = browser;
+    console.log("Switched to browser from chrome");
+} catch (err) { }
 
 // Set time of last page load to now
 store(TIME_OF_LAST_PAGE_LOAD_KEY, Date.now());

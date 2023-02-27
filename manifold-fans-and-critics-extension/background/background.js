@@ -21,7 +21,12 @@ FETCH_POSITIONS_URL = 'https://manifold.markets/api/v0/market/ID/positions';
 const TOP_SPOTS_TO_LOAD = 5; // This is for data processing, not for displaying. It should be greater than or equal to the max of places-to-show slider in popup.js
 
 // Use chrome in chrome, and browser in firefox
-// var browser = (window.browser)? window.browser : window.chrome;
+var chrome = chrome;
+try {
+    chrome = browser;
+    console.log("Switched to browser from chrome");
+} catch (err) { }
+
 
 console.log("Starting background");
 

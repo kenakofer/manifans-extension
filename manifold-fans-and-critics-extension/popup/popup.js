@@ -10,7 +10,11 @@ BACKGROUND_HEARTBEAT_KEY = EXTENSION_PREFIX + 'background-heartbeat';
 LOAD_STATUS_KEY = EXTENSION_PREFIX + 'load-status';
 
 // Use chrome in chrome, and browser in firefox
-var browser = (window.browser)? window.browser : window.chrome;
+var chrome = chrome;
+try {
+    chrome = browser;
+    console.log("Switched to browser from chrome");
+} catch (err) { }
 
 checkIfBackgroundNeedsRestarted();
 // Check if background script needs restarted when popup is opened
