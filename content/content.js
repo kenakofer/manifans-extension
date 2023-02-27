@@ -173,6 +173,7 @@ async function replaceImages() {
             hoverTextTable.appendChild(yesEllipsis);
           }
           yesEllipsis.textContent = ' +' + yesEllided + " more...";
+          yesEllipsis.appendChild
           return;
         }
         yesEntries++;
