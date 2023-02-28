@@ -33,7 +33,7 @@
     "scripting"
   ],
   "host_permissions": [
-    "https://manifold.markets/"
+    "https://manifold.markets/*"
   ],
   "background": {
     "service_worker": "background/background.js"

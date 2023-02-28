@@ -65,8 +65,14 @@ async function store(key, value) {
 }
 
 async function get(key) {
-  const result = await chrome.storage.local.get(key);
-  return result[key];
+  try {
+    const result = await chrome.storage.local.get(key);
+    return result[key];
+  } catch (err) {
+    // reload the page
+    window.location.reload();
+    return null;
+  }
 }
 
 async function getJson(key) {

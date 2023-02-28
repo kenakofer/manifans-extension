@@ -44,7 +44,13 @@ chrome.runtime.onMessage.addListener(
 let running = false
 store(BACKGROUND_HEARTBEAT_KEY, Date.now());
 
+backgroundLoop();
 setInterval(async () => {
+    backgroundLoop();
+}, 10 * 1000);
+
+
+async function backgroundLoop() {
     // Set a heartbeat so that we can tell if the background script is running
     store(BACKGROUND_HEARTBEAT_KEY, Date.now());
 
@@ -64,7 +70,7 @@ setInterval(async () => {
             running = false;
             console.log("Error: unlocking");
         });
-}, 10 * 1000);
+}
 
 
 async function fillInMissingData() {
@@ -72,7 +78,8 @@ async function fillInMissingData() {
 
     // Check if last page load was more than 1 minute ago
     var timeOfLastPageLoad = await get(TIME_OF_LAST_PAGE_LOAD_KEY);
-    if (!timeOfLastPageLoad || (Date.now() - timeOfLastPageLoad) > 1000 * 60 * 10) {
+    // Also, if we have never synced, we'll go ahead and sync
+    if (timeOfLastPageLoad && (Date.now() - timeOfLastPageLoad) > 1000 * 60 * 10) {
         console.log("User is not active on Manifold, not updating");
         store(LOAD_STATUS_KEY, {
             percent: 1.0,

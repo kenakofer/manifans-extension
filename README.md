@@ -11,9 +11,9 @@ I haven't added it to the browser web stores yet. To load the extension locally:
  1. Download this repository.
    1. On **Firefox**: rename `firefox-manifest.json` to `manifest.json`, then go to `about:debugging`, `This Firefox`, `Load Temporary Add-on...`, and navigate into the directory with `manifest.json`.
    1. On **Chrome**: rename `chrome-manifest.json` to `manifest.json`, then go to `about:extensions`, `Developer Mode`, `Load Unpacked`, and navigate into the directory with `manifest.json`.
- 
+
 Once installed, click on the extension icon in your browser to see the status and settings. It takes a minute after installation to sync all the market and position data for the first time.
- 
+
 ## What does it do?
 
  - While browsing Manifold, it periodically checks for changes to the relevant markets.
@@ -32,6 +32,7 @@ It might be useful to for traders to passively notice that another commenter on 
 
 
 ### TODO
+    - Change emoji silhouette to match
     - After sorting by #1, #2 etc, sort by size of position? value of position? # of traders below you in the position? # of traders on either side of your position? We want important markets higher up somehow, and there's important differences between these.
     - Expand the +3 more on click, then force a harder display filter cutoff
     - Save a userToHTML object for faster replacement
