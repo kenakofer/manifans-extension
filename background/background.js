@@ -10,7 +10,7 @@ RELOAD_AFTER_SECONDS = 10 * 60; // 10 minutes
 MARKET_FETCH_BATCH_SIZE = 5;
 DIRECTIONS = ['YES', 'NO'];
 
-NECESSARY_MARKET_KEYS = ['url', 'fanString'];
+NECESSARY_MARKET_KEYS = ['url', 'fanString', 'totalLiquidity'];
 
 LOAD_STATUS_KEY = EXTENSION_PREFIX + 'load-status';
 
@@ -187,7 +187,8 @@ async function getTopUsersInMarket(market_id, spots, userNameToTopPositions, per
             userNameToTopPositions[position.userUsername].push({
                 marketId: market_id,
                 place: i + 1,
-                direction: direction
+                direction: direction,
+                totalLiquidity: market.totalLiquidity
             });
         });
     });
@@ -221,7 +222,7 @@ async function buildUserNameToTopPositions(spots, permMarkets) {
     Object.keys(userNameToTopPositions).forEach((username) => {
         userNameToTopPositions[username].sort((a, b) => {
             if (a.direction == b.direction) {
-                return a.place - b.place;
+                return (a.place - b.place) * 10000 + b.totalLiquidity - a.totalLiquidity;
             } else if (a.direction == 'YES') {
                 return -1;
             } else {
