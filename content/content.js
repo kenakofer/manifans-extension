@@ -178,7 +178,7 @@ async function replaceImages() {
         return;
       }
       if (position.direction == 'YES') {
-        if (position.place > 1 && yesEntries >= 10) {
+        if (yesEntries >= 10) {
           yesEllided++;
           // Create the ellipsis element if it doesn't exist
           if (!yesEllipsis) {
@@ -192,7 +192,7 @@ async function replaceImages() {
         }
         yesEntries++;
       } else {
-        if (position.place > 1 && noEntries >= 10) {
+        if (noEntries >= 10) {
           noEllided++;
           // Create the ellipsis element if it doesn't exist
           if (!noEllipsis) {
