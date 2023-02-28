@@ -45,10 +45,18 @@ async function replaceImagesDelayed() {
   setTimeout(replaceImages, 250);
 }
 
-// TODO remove, this is just for testing
+
+// For the first three second, replace the images every 250ms to catch everything ASAP
+for (var i = 0; i < 12; i++) {
+  setTimeout(replaceImages, i * 250);
+}
+
+// For when the Manifold UI resets everything randomly
 setInterval( async () => {
   replaceImages();
 }, 2000);
+
+
 
 // Listen for changes to the local storage for places-to-show every few seconds
 var cachedPlacesToShow;
