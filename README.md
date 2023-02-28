@@ -8,8 +8,9 @@ ManiFans is a browser extension for [Manifold Markets](https://manifold.markets)
 
 I haven't added it to the browser web stores yet. To load the extension locally:
 
- - On **Firefox**: rename `firefox-manifest.json` to `manifest.json`, then go to `about:debugging`, `This Firefox`, `Load Temporary Add-on...`, and navigate into the directory with `manifest.json`.
- - On **Chrome**: rename `chrome-manifest.json` to `manifest.json`, then go to `about:extensions`, `Developer Mode`, `Load Unpacked`, and navigate into the directory with `manifest.json`.
+ 1. Download this repository.
+   1. On **Firefox**: rename `firefox-manifest.json` to `manifest.json`, then go to `about:debugging`, `This Firefox`, `Load Temporary Add-on...`, and navigate into the directory with `manifest.json`.
+   1. On **Chrome**: rename `chrome-manifest.json` to `manifest.json`, then go to `about:extensions`, `Developer Mode`, `Load Unpacked`, and navigate into the directory with `manifest.json`.
  
 Once installed, click on the extension icon in your browser to see the status and settings. It takes a minute after installation to sync all the market and position data for the first time.
  
