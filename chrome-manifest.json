@@ -20,9 +20,7 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "content/foam-hand.png",
-        "content/frown.png",
-        "content/star.png"
+        "content/*"
       ],
       "matches": [ "https://manifold.markets/*" ]
     }

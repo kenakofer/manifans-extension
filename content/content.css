@@ -45,25 +45,28 @@
   color: #FFC2C5
 }
 
-.star-image {
+.tiny-icon {
   width: 15px;
   height: 15px;
+  margin-right: 5px;
   background-size: cover;
-  /* partially transparent */
-  opacity: 0.45;
   /* vertically center */
   display: flex;
   align-items: center;
-  background-image: url('star.png'), url('chrome-extension://__MSG_@@extension_id__/content/star.png');
 }
-.frown-image {
-  width: 15px;
-  height: 15px;
-  background-size: cover;
+.trophy-shadow-image {
+  background-image: url('trophy-shadow.png'), url('chrome-extension://__MSG_@@extension_id__/content/trophy-shadow.png');
   /* partially transparent */
-  opacity: 0.55;
-  /* vertically center */
-  display: flex;
-  align-items: center;
-  background-image: url('frown.png'), url('chrome-extension://__MSG_@@extension_id__/content/frown.png');
+  opacity: 0.85;
+}
+.pepper-shadow-image {
+  background-image: url('pepper-shadow.png'), url('chrome-extension://__MSG_@@extension_id__/content/pepper-shadow.png');
+  /* partially transparent */
+  opacity: 0.85;
+}
+.trophy-image {
+  background-image: url('trophy.png'), url('chrome-extension://__MSG_@@extension_id__/content/trophy.png');
+}
+.pepper-image {
+  background-image: url('pepper.png'), url('chrome-extension://__MSG_@@extension_id__/content/pepper.png');
 }

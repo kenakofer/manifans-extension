@@ -32,17 +32,15 @@ It might be useful to for traders to passively notice that another commenter on 
 
 
 ### TODO
-    - Change emoji silhouette to match
-    - After sorting by #1, #2 etc, sort by size of position? value of position? # of traders below you in the position? # of traders on either side of your position? We want important markets higher up somehow, and there's important differences between these.
+    - Change icon while inactive/loading
+    - Upload to Firefox
+    - Upload to Chrome
     - Expand the +3 more on click, then force a harder display filter cutoff
     - Save a userToHTML object for faster replacement
     - Make popup have nicer button
     - Change "chance" and "probability" to "favorable" or "good". Maybe YES and NO as well?
     - Some convention for reading a fan string from out of the description
-    - It still just sometimes doesn't show on the page, then I refresh and it shows.
-    - I'm probably still doing storage horribly wrong.
     - hard to mouse from small image onto hover
     - Solve the disappearing problem on the Positions tab
-    - Solve the background script stopping.
     - Limit ourselves once API gives that capability
     - Smart update (listen for new bets on perm markets, only update the data affected)

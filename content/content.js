@@ -228,28 +228,25 @@ async function replaceImages() {
       // link.target = '_blank'; // open in a new tab
       // add the class fan-link
       link.textContent = permMarkets[position.marketId].fanString + "'s #" + position.place +" ";
+      const imageDiv = document.createElement('div');
+      imageDiv.classList.add('tiny-icon');
+      emojiColumn.appendChild(imageDiv);
+
       if (position.direction == 'YES') {
         link.textContent += 'Fan!';
         link.classList.add('fan-link');
         if (position.place == 1) {
-          emojiColumn.textContent = '🏆';
+          imageDiv.classList.add('trophy-image');
         } else {
-          // Insert the image of the star icon
-          const starImage = document.createElement('div');
-          starImage.classList.add('star-image');
-          emojiColumn.appendChild(starImage);
+          imageDiv.classList.add('trophy-shadow-image');
         }
       } else {
         link.textContent += 'Critic';
         link.classList.add('critic-link');
         if (position.place == 1) {
-          emojiColumn.textContent = '🌶️';
+          imageDiv.classList.add('pepper-image');
         } else {
-
-          // Insert the image of the star icon
-          const frownImage = document.createElement('div');
-          frownImage.classList.add('frown-image');
-          emojiColumn.appendChild(frownImage);
+          imageDiv.classList.add('pepper-shadow-image');
         }
       }
       if (position.direction != 'YES' && !criticSeparator && yesEntries > 0) {
