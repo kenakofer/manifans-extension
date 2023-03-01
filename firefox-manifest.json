@@ -1,6 +1,6 @@
 {
   "name": "ManiFans",
-  "version": "0.1",
+  "version": "0.1.2",
   "description": "Browser extension for Manifold Markets, displaying digital flair on users that hold large positions in permanent markets/stocks.",
   "manifest_version": 2,
   "icons": {
@@ -15,8 +15,8 @@
   },
   "browser_specific_settings": {
     "gecko": {
-      "id": "addon@example.com",
-      "strict_min_version": "42.0"
+      "id": "manifans.extension@gmail.com",
+      "strict_min_version": "57.0"
     }
   },
   "permissions": [
@@ -44,6 +44,5 @@
       ],
       "run_at": "document_end"
     }
-  ],
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'"
+  ]
 }

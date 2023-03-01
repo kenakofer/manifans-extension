@@ -28,7 +28,7 @@ async function checkIfBackgroundNeedsRestarted() {
 // Places to show slider
 document.querySelector('#places-to-show').addEventListener('input', async() => {
     const value = document.querySelector('#places-to-show').value;
-    document.querySelector('#places-to-show-value').innerHTML = value;
+    document.querySelector('#places-to-show-value').textContent = value;
     await store(PLACES_TO_SHOW_KEY, value);
     console.log(PLACES_TO_SHOW_KEY + ": " + value);
 });
@@ -36,7 +36,7 @@ document.querySelector('#places-to-show').addEventListener('input', async() => {
 // Button to update
 document.querySelector('#update-button').addEventListener('click', () => {
     store(UPDATE_NOW_KEY, true);
-    document.querySelector('#load-status-label').innerHTML = 'Getting ready to sync...';
+    document.querySelector('#load-status-label').textContent = 'Getting ready to sync...';
     // Also store in LOAD_STATUS_KEY
     store(LOAD_STATUS_KEY, {
         percent: 0,
@@ -53,7 +53,7 @@ async function setLoadStatusFromStorage() {
     if (result) {
         document.querySelector('#load-status-inner-bar').style.width = Math.round(result.percent * 100) + '%';
         document.querySelector('#load-status-outer-bar').style.display = result.display;
-        document.querySelector('#load-status-label').innerHTML = result.message;
+        document.querySelector('#load-status-label').textContent = result.message;
     }
 }
 
@@ -64,9 +64,9 @@ async function setLastSyncFromStorage() {
     if (result) {
         // Display in minutes
         const minutes = Math.round((Date.now() - result) / 1000 / 60);
-        document.querySelector('#last-synced-time').innerHTML = minutes + ' minutes ago';
+        document.querySelector('#last-synced-time').textContent = minutes + ' minutes ago';
     } else {
-        document.querySelector('#last-synced-time').innerHTML = 'never';
+        document.querySelector('#last-synced-time').textContent = 'never';
     }
 }
 
@@ -79,7 +79,7 @@ async function setSliderValueFromStorage() {
     if (result) {
         console.log('placesToShow loading at ' + result);
         document.querySelector('#places-to-show').value = result;
-        document.querySelector('#places-to-show-value').innerHTML = result;
+        document.querySelector('#places-to-show-value').textContent = result;
     }
 }
 
