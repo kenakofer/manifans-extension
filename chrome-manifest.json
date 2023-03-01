@@ -4,15 +4,11 @@
   "description": "Browser extension for Manifold Markets, displaying digital flair on users that hold large positions in permanent markets/stocks.",
   "manifest_version": 3,
   "icons": {
-    "16": "icons/icon16.png",
-    "32": "icons/icon32.png",
-    "48": "icons/icon48.png"
+    "128": "icons/icon128.png"
   },
   "action": {
     "default_icon": {
-      "16": "icons/icon16.png",
-      "32": "icons/icon32.png",
-      "48": "icons/icon48.png"
+      "128": "icons/icon128.png"
     },
     "default_title": "ManiFans",
     "default_popup": "popup/popup.html"

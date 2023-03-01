@@ -1,6 +1,6 @@
 # ManiFans Extension
 
-<img align="left" src="icons/icon48.png" height="65px">
+<img align="left" src="icons/icon128.png" height="65px">
 
 ManiFans is a browser extension for [Manifold Markets](https://manifold.markets). It adds a badge to the profile picture of users who hold the top positions on permanent markets, AKA stock markets. When you hover over this badge, you might see that they are "Aba's #1 Fan", and "AI Singularity's #3 Critic", and you know they've put their mana where their mouth is to earn those titles.
 
