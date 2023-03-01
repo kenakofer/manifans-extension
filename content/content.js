@@ -50,20 +50,14 @@ for (var i = 0; i < 12; i++) {
 }
 
 // For when the Manifold UI resets everything randomly
-setInterval( async () => {
-  replaceImages();
-}, 2000);
-
-
-
-// Listen for changes to the local storage for places-to-show every few seconds
 var cachedPlacesToShow;
 setInterval( async () => {
+  // Listen for changes to the local storage for places-to-show
   var placesToShow = await get(PLACES_TO_SHOW_KEY);
   if (placesToShow && placesToShow !== cachedPlacesToShow) {
     cachedPlacesToShow = placesToShow;
-    replaceImages();
   }
+  replaceImagesIfNotHidden();
 }, 2000);
 
 async function store(key, value) {
@@ -95,9 +89,16 @@ window.onload = () => {
   replaceImages();
 };
 
+async function replaceImagesIfNotHidden() {
+  if (document.visibilityState === "hidden") {
+    // console.log("Page is hidden, skipping replaceImages");
+    return;
+  }
+  await replaceImages(true);
+}
+
 async function replaceImages() {
   // console.log("Replacing images...");
-
 
   // Load userNameToTopPositions from local storage
   const userNameToTopPositions = await getJson(USERNAME_TO_TO_POSITIONS_KEY);
