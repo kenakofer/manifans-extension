@@ -9,7 +9,6 @@ BACKGROUND_HEARTBEAT_KEY = EXTENSION_PREFIX + 'background-heartbeat';
 var chrome = chrome;
 try {
     chrome = browser;
-    console.log("Switched to browser from chrome");
 } catch (err) { }
 
 // Set time of last page load to now
@@ -32,7 +31,6 @@ if (tabs) {
   tabs.addEventListener('click', replaceImagesDelayed);
 }
 setTimeout(() => {
-  console.log('timeout');
   // Only grab the first nav with aria-label="Tabs"
   tabs = document.querySelector('nav[aria-label="Tabs"]');
   // On click
@@ -94,12 +92,11 @@ async function getJson(key) {
 
 // Replace the images once the page has loaded
 window.onload = () => {
-  console.log('Window loaded');
   replaceImages();
 };
 
 async function replaceImages() {
-  console.log("Replacing images...");
+  // console.log("Replacing images...");
 
 
   // Load userNameToTopPositions from local storage

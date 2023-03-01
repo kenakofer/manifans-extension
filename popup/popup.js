@@ -13,7 +13,6 @@ LOAD_STATUS_KEY = EXTENSION_PREFIX + 'load-status';
 var chrome = chrome;
 try {
     chrome = browser;
-    console.log("Switched to browser from chrome");
 } catch (err) { }
 
 checkIfBackgroundNeedsRestarted();
