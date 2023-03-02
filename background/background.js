@@ -1,5 +1,5 @@
 EXTENSION_PREFIX = 'manifans-extension_';
-PERM_MARKETS_KEY = EXTENSION_PREFIX + 'perm-markets';
+MARKET_MAP_KEY = EXTENSION_PREFIX + 'market-map';
 USERNAME_TO_TO_POSITIONS_KEY = EXTENSION_PREFIX + 'user-to-markets';
 PLACES_TO_SHOW_KEY = EXTENSION_PREFIX + 'places-to-show';
 UPDATE_NOW_KEY = EXTENSION_PREFIX + 'update-now';
@@ -15,7 +15,11 @@ NECESSARY_MARKET_KEYS = ['url', 'fanString', 'totalLiquidity'];
 LOAD_STATUS_KEY = EXTENSION_PREFIX + 'load-status';
 
 PERMANENT_GROUP_ID = '2T4mM0N5az2lYcaN5G50';
-FETCH_MARKETS_URL = 'https://manifold.markets/api/v0/group/by-id/' + PERMANENT_GROUP_ID + '/markets';
+FETCH_PERM_MARKETS_URL = 'https://manifold.markets/api/v0/group/by-id/' + PERMANENT_GROUP_ID + '/markets';
+
+MANIFANS_GROUP_ID = '3cpr3RrU1ZCe19JQGIRK';
+FETCH_MANIFANS_MARKETS_URL = 'https://manifold.markets/api/v0/group/by-id/' + MANIFANS_GROUP_ID + '/markets';
+
 FETCH_POSITIONS_URL = 'https://manifold.markets/api/v0/market/ID/positions';
 
 const TOP_SPOTS_TO_LOAD = 5; // This is for data processing, not for displaying. It should be greater than or equal to the max of places-to-show slider in popup.js
@@ -89,7 +93,7 @@ async function fillInMissingData() {
     }
 
 
-    var permMarkets = await getJson(PERM_MARKETS_KEY);
+    var marketMap = await getJson(MARKET_MAP_KEY);
     var userNameToTopPositions = await getJson(USERNAME_TO_TO_POSITIONS_KEY);
 
 
@@ -99,24 +103,24 @@ async function fillInMissingData() {
 
     if (updateNow || !timeOfLastUpdate || (Date.now() - timeOfLastUpdate) > 1000 * RELOAD_AFTER_SECONDS) {
         // Invalidate the variables, but not the storage
-        permMarkets = null;
+        marketMap = null;
         userNameToTopPositions = null;
         store(UPDATE_NOW_KEY, false); // Message received, reset the flag
     }
 
-    if (!permMarkets) {
+    if (!marketMap) {
         console.log('Perm markets not found in storage, fetching from API...');
-        permMarkets = await reloadMarkets();
+        marketMap = await reloadMarkets();
     }
-    if (permMarkets && !userNameToTopPositions) {
-        await buildUserNameToTopPositions(TOP_SPOTS_TO_LOAD, permMarkets);
+    if (marketMap && !userNameToTopPositions) {
+        await buildUserNameToTopPositions(TOP_SPOTS_TO_LOAD, marketMap);
     }
-    else if (permMarkets && userNameToTopPositions) {
+    else if (marketMap && userNameToTopPositions) {
         // Update status to done
         store(LOAD_STATUS_KEY, {
             percent: 1.0,
             display: "inline-block",
-            message: Object.keys(permMarkets).length + " markets, " + Object.keys(userNameToTopPositions).length + " users"});
+            message: Object.keys(marketMap).length + " markets, " + Object.keys(userNameToTopPositions).length + " users"});
     }
 }
 
@@ -152,9 +156,9 @@ function insertSorted(array, position, key) {
     }
 }
 
-async function getTopUsersInMarket(market_id, spots, userNameToTopPositions, permMarkets) {
+async function getTopUsersInMarket(market_id, spots, userNameToTopPositions, marketMap) {
     console.log("Fetching positions for market " + market_id);
-    const market = permMarkets[market_id];
+    const market = marketMap[market_id];
 
     var best = { YES: [], NO: [] };
     for (var i = 0; i < spots; i++) {
@@ -194,18 +198,18 @@ async function getTopUsersInMarket(market_id, spots, userNameToTopPositions, per
     });
 }
 
-async function buildUserNameToTopPositions(spots, permMarkets) {
+async function buildUserNameToTopPositions(spots, marketMap) {
     console.log('Building username to top positions...');
-    console.log(permMarkets);
+    console.log(marketMap);
     const userNameToTopPositions = {};
 
 
-    const market_ids = Object.keys(permMarkets);
+    const market_ids = Object.keys(marketMap);
     for (var batch = 0; batch < market_ids.length; batch += MARKET_FETCH_BATCH_SIZE) {
         var batchedFetches = [];
         for (var m = 0; batch+m < market_ids.length && m < MARKET_FETCH_BATCH_SIZE; m++) {
             const market_id = market_ids[batch + m];
-            batchedFetches.push(getTopUsersInMarket(market_id, spots, userNameToTopPositions, permMarkets));
+            batchedFetches.push(getTopUsersInMarket(market_id, spots, userNameToTopPositions, marketMap));
         };
         console.log("Running batch " + batch + "/" + market_ids.length);
         if (batch % 5 == 0) {
@@ -245,12 +249,16 @@ async function buildUserNameToTopPositions(spots, permMarkets) {
 async function reloadMarkets() {
     console.log('reloadMarkets()');
     // Get the full list of markets, sifting through them for the permanent binary ones
-    permMarkets = {};
+    marketMap = {};
 
-    const marketResponse = await fetch(FETCH_MARKETS_URL);
-
+    const permMarketResponse = await fetch(FETCH_PERM_MARKETS_URL);
     // Wait for the response to be parsed before continuing
-    const markets = await marketResponse.json();
+    var markets = await permMarketResponse.json();
+
+    const manifansMarketResponse = await fetch(FETCH_MANIFANS_MARKETS_URL);
+    // Wait for the response to be parsed before continuing
+    markets = markets.concat(await manifansMarketResponse.json());
+
 
     markets.forEach((market) => {
         // Only binary markets
@@ -268,8 +276,12 @@ async function reloadMarkets() {
         //     return;
         // }
 
-        // Set fanstring to be the market question without words in parentheses, and without words like "stock"
-        let ma = market.question.replace(/\(.*?\)/g, '').replace(/\[.*?\]/g, '').replace(/stock/gi, '').trim();
+        // Set fanstring to be the market question without words in parentheses or braces
+        let ma = market.question.replace(/\(.*?\)/g, '').replace(/\[.*?\]/g, '');
+        // Replace the last instance of the word "stock" with nothing
+        ma = ma.replace(/stock\s*$/i, '');
+        ma = ma.trim();
+
         market.fanString = ma;
 
         // Check if each key is in the list of keys to keep (save id to use for the key)
@@ -280,13 +292,13 @@ async function reloadMarkets() {
             }
         }
 
-        // Append market to permMarkets
-        permMarkets[market_id] = market;
+        // Append market to marketMap, (don't have to worry about duplicates because we're using a map)
+        marketMap[market_id] = market;
     });
 
-    var storageString = JSON.stringify(permMarkets);
-    console.log('Size of permMarkets going into storage: ' + storageString.length);
-    await store(PERM_MARKETS_KEY, storageString);
+    var storageString = JSON.stringify(marketMap);
+    console.log('Size of marketMap going into storage: ' + storageString.length);
+    await store(MARKET_MAP_KEY, storageString);
 
-    return permMarkets;
+    return marketMap;
 }

@@ -1,5 +1,5 @@
 EXTENSION_PREFIX = 'manifans-extension_';
-PERM_MARKETS_KEY = EXTENSION_PREFIX + 'perm-markets';
+MARKET_MAP_KEY = EXTENSION_PREFIX + 'market-map';
 USERNAME_TO_TO_POSITIONS_KEY = EXTENSION_PREFIX + 'user-to-markets';
 PLACES_TO_SHOW_KEY = EXTENSION_PREFIX + 'places-to-show';
 TIME_OF_LAST_PAGE_LOAD_KEY = EXTENSION_PREFIX + 'time-of-last-page-load';
@@ -108,7 +108,7 @@ async function replaceImages() {
     return;
   }
 
-  const permMarkets = await getJson(PERM_MARKETS_KEY);
+  const permMarkets = await getJson(MARKET_MAP_KEY);
 
   var placesToShow = await get(PLACES_TO_SHOW_KEY);
   placesToShow = placesToShow ? placesToShow : 3; // Default slider value is 3
