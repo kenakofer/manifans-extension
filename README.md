@@ -1,21 +1,14 @@
-# ManiFans Extension
+# ManiFans Extension [![](https://img.shields.io/amo/v/manifans.svg?logo=firefox&style=flat)](https://addons.mozilla.org/en-US/firefox/addon/manifans/)
 
 <img align="left" src="icons/icon128.png" height="65px">
 
-ManiFans is a browser extension for [Manifold Markets](https://manifold.markets). It adds a badge to the profile picture of users who hold the top positions on permanent markets, AKA stock markets. When you hover over this badge, you might see that they are "Aba's #1 Fan", and "AI Singularity's #3 Critic", and you know they've put their mana where their mouth is to earn those titles.
+ManiFans is an extension for [Firefox](https://addons.mozilla.org/en-US/firefox/addon/manifans/) and Chrome. It adds a badge to the profile picture of users on [Manifold Markets](https://manifold.markets) who hold the top positions on permanent markets, AKA stock markets. When you hover over this badge, you might see that they are "Aba's #1 Fan", and "AI Singularity's #3 Critic", and you know they've put their mana where their mouth is to secure those titles.
+
+-----------------
 
 ![screenshot showing extension in use](screenshot-redacted.png)
 
 
-## Installation
-
-I haven't added it to the browser web stores yet. To load the extension locally:
-
- 1. Download this repository.
-   1. On **Firefox**: rename `firefox-manifest.json` to `manifest.json`, then go to `about:debugging`, `This Firefox`, `Load Temporary Add-on...`, and navigate into the directory with `manifest.json`.
-   1. On **Chrome**: rename `chrome-manifest.json` to `manifest.json`, then go to `about:extensions`, `Developer Mode`, `Load Unpacked`, and navigate into the directory with `manifest.json`.
-
-Once installed, click on the extension icon in your browser to see the status and settings. It takes a minute after installation to sync all the market and position data for the first time.
 
 ## What does it do?
 
@@ -32,6 +25,16 @@ Right now, few people give attention to the positions or percentages of "permane
 ManiFans rewards those holding the largest positions (and the subject of the market) with social attention, and thus tighten a "social peg" to the value of shares. Having this strengthened peg is good not just for those who want to put their fandom on display, but also for those predicting the price of that attention, and those wanting the market's current balance to tell them something real about the subject's social standing.
 
 It might be useful to for traders to passively notice that another commenter on some SpaceX prediction has the badge "Elon Musk's #1 Critic. Whether or not the commenter is truly critical of Elon, it's notable that they paid for a costly signal to that effect.
+
+## Run locally for testing
+
+To load the extension locally:
+
+ 1. Download this repository.
+   1. On **Firefox**: rename `firefox-manifest.json` to `manifest.json`, then go to `about:debugging`, `This Firefox`, `Load Temporary Add-on...`, and navigate into the directory with `manifest.json`.
+   1. On **Chrome**: rename `chrome-manifest.json` to `manifest.json`, then go to `about:extensions`, `Developer Mode`, `Load Unpacked`, and navigate into the directory with `manifest.json`.
+
+Once installed, click on the extension icon in your browser to see the status and settings. It takes a minute after installation to sync all the market and position data for the first time.
 
 
 ### TODO
