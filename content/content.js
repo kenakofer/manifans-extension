@@ -136,6 +136,15 @@ async function replaceImages() {
     }
     image.classList.add('replaced-by-extension');
 
+    // Find any parent divs with the "overflow-hidden" class and remove it
+    var parent = image.parentNode;
+    while (parent) {
+      if (parent.classList && parent.classList.contains('overflow-hidden')) {
+        parent.classList.remove('overflow-hidden');
+        break; // Only remove one overflow-hidden class
+      }
+      parent = parent.parentNode;
+    }
 
     const wrapper = document.createElement('div');
     wrapper.style.position = 'relative'; // set position to relative to position the icon correctly
@@ -214,6 +223,9 @@ async function replaceImages() {
       const emojiColumn = document.createElement('td');
       const textColumn = document.createElement('td');
       link.appendChild(textColumn);
+      hoverTextRow.classList.add('inherit-background');
+      emojiColumn.classList.add('manifans-cell');
+      textColumn.classList.add('manifans-cell');
       hoverTextRow.appendChild(emojiColumn);
       hoverTextRow.appendChild(textColumn);
       textColumn.appendChild(link);
