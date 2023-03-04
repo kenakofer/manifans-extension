@@ -10,7 +10,7 @@ RELOAD_AFTER_SECONDS = 10 * 60; // 10 minutes
 MARKET_FETCH_BATCH_SIZE = 5;
 DIRECTIONS = ['YES', 'NO'];
 
-NECESSARY_MARKET_KEYS = ['url', 'fanString', 'totalLiquidity'];
+NECESSARY_MARKET_KEYS = ['url', 'displayStrings', 'totalLiquidity'];
 
 LOAD_STATUS_KEY = EXTENSION_PREFIX + 'load-status';
 
@@ -21,6 +21,8 @@ MANIFANS_GROUP_ID = '3cpr3RrU1ZCe19JQGIRK';
 FETCH_MANIFANS_MARKETS_URL = 'https://manifold.markets/api/v0/group/by-id/' + MANIFANS_GROUP_ID + '/markets';
 
 FETCH_POSITIONS_URL = 'https://manifold.markets/api/v0/market/ID/positions';
+
+FETCH_MARKET_DESCRIPTION_URL = 'https://manifold.markets/api/v0/market/ID';
 
 const TOP_SPOTS_TO_LOAD = 5; // This is for data processing, not for displaying. It should be greater than or equal to the max of places-to-show slider in popup.js
 
@@ -146,6 +148,10 @@ function getPositionsUrl(marketId) {
     return FETCH_POSITIONS_URL.replace('ID', marketId);
 }
 
+function getMarketDescriptionUrl(marketId) {
+    return FETCH_MARKET_DESCRIPTION_URL.replace('ID', marketId);
+}
+
 function insertSorted(array, position, key) {
     for (var i = 0; i < array.length; i++) {
         if (position.totalShares[key] > array[i].totalShares[key]) {
@@ -260,29 +266,52 @@ async function reloadMarkets() {
     markets = markets.concat(await manifansMarketResponse.json());
 
 
-    markets.forEach((market) => {
+    // Loop with a traditional for loop so we can use await inside the loop
+    for (var i = 0; i < markets.length; i++) {
+        const market = markets[i];
+
         // Only binary markets
         if (market.outcomeType !== 'BINARY') {
-            return;
+            continue;
         }
 
         // Only still open markets
         if (market.isResolved) {
-            return;
+            continue;
         }
 
         // Only markets with permanent in the question
         // if (!market.question.includes('(Permanent)') && !market.question.includes('[Permanent]')) {
-        //     return;
+        //     continue;
         // }
 
-        // Set fanstring to be the market question without words in parentheses or braces
+        // market.textDescription is only available with an additional API call,
+        // so only do it if we think it'll really help with display, if it's not
+        // a "stock"
+        if (!market.question.match(/stock/i)) {
+            // Fetch market description data from the API
+            const marketDescriptionResponse = await fetch(getMarketDescriptionUrl(market.id));
+            // Wait for the response to be parsed before continuing
+            const marketDescription = await marketDescriptionResponse.json();
+            market.textDescription = marketDescription.textDescription;
+        }
+
+        // Set displayStrings to be the market question without words in parentheses or braces
         let ma = market.question.replace(/\(.*?\)/g, '').replace(/\[.*?\]/g, '');
+
+        // Set containsStock if the word "stock" is in the question case insensitive
+        var containsStock = ma.match(/stock/i);
+
         // Replace the last instance of the word "stock" with nothing
         ma = ma.replace(/stock\s*$/i, '');
         ma = ma.trim();
+        ma += "'s";
 
-        market.fanString = ma;
+        market.displayStrings = {
+            subject: extractFromDescription("subject", market.textDescription, 20) || ma,
+            fan: extractFromDescription("fan", market.textDescription, 15) || "Fan!",
+            critic: extractFromDescription("critic", market.textDescription, 15) || "Critic"
+        };
 
         // Check if each key is in the list of keys to keep (save id to use for the key)
         var market_id = market.id;
@@ -294,11 +323,25 @@ async function reloadMarkets() {
 
         // Append market to marketMap, (don't have to worry about duplicates because we're using a map)
         marketMap[market_id] = market;
-    });
+    }
 
     var storageString = JSON.stringify(marketMap);
     console.log('Size of marketMap going into storage: ' + storageString.length);
     await store(MARKET_MAP_KEY, storageString);
 
     return marketMap;
+}
+
+function extractFromDescription(key, description, maxLength) {
+    if (!description) {
+        return null;
+    }
+    // If the description is "\n\nsubject: Tri-omni God\n\nfan: Believer\n\ncritic: Skeptic\n\n", and the key is "critic", then this function will return "Skeptic" (It must be by itself between \n's, or right before the end of the string)
+    var regex = new RegExp("\\n" + key + ":\\s*(.*?)\\n");
+    var match = description.match(regex);
+    if (match) {
+        console.log("Found " + key + " in description: " + match[1]);
+        return match[1].substring(0, maxLength);
+    }
+    return null;
 }

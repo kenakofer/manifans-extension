@@ -45,7 +45,6 @@ Once installed, click on the extension icon in your browser to see the status an
     - Save a userToHTML object for faster replacement
     - Make popup have nicer button
     - Change "chance" and "probability" to "favorable" or "good". Maybe YES and NO as well?
-    - Some convention for reading a fan string from out of the description
     - hard to mouse from small image onto hover
     - Solve the disappearing problem on the Positions tab
     - Limit ourselves once API gives that capability

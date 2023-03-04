@@ -237,13 +237,13 @@ async function replaceImages() {
 
       // link.target = '_blank'; // open in a new tab
       // add the class fan-link
-      link.textContent = permMarkets[position.marketId].fanString + "'s #" + position.place +" ";
+      link.textContent = permMarkets[position.marketId].displayStrings.subject + " #" + position.place +" ";
       const imageDiv = document.createElement('div');
       imageDiv.classList.add('tiny-icon');
       emojiColumn.appendChild(imageDiv);
 
       if (position.direction == 'YES') {
-        link.textContent += 'Fan!';
+        link.textContent += permMarkets[position.marketId].displayStrings.fan;
         link.classList.add('fan-link');
         if (position.place == 1) {
           imageDiv.classList.add('trophy-image');
@@ -251,7 +251,7 @@ async function replaceImages() {
           imageDiv.classList.add('trophy-shadow-image');
         }
       } else {
-        link.textContent += 'Critic';
+        link.textContent += permMarkets[position.marketId].displayStrings.critic;
         link.classList.add('critic-link');
         if (position.place == 1) {
           imageDiv.classList.add('pepper-image');
