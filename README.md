@@ -39,8 +39,6 @@ Once installed, click on the extension icon in your browser to see the status an
 
 ### TODO
     - Change icon while inactive/loading
-    - Upload to Firefox
-    - Upload to Chrome
     - Expand the +3 more on click, then force a harder display filter cutoff
     - Save a userToHTML object for faster replacement
     - Make popup have nicer button
@@ -49,3 +47,5 @@ Once installed, click on the extension icon in your browser to see the status an
     - Solve the disappearing problem on the Positions tab
     - Limit ourselves once API gives that capability
     - Smart update (listen for new bets on perm markets, only update the data affected)
+
+    - Show weighted calibration score on different sides of markets?

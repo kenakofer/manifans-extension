@@ -336,12 +336,18 @@ function extractFromDescription(key, description, maxLength) {
     if (!description) {
         return null;
     }
-    // If the description is "\n\nsubject: Tri-omni God\n\nfan: Believer\n\ncritic: Skeptic\n\n", and the key is "critic", then this function will return "Skeptic" (It must be by itself between \n's, or right before the end of the string)
-    var regex = new RegExp("\\n" + key + ":\\s*(.*?)\\n");
+    // If the description is
+    // "\n\nsubject: Tri-omni God\n\nfan: Believer\n\ncritic: Skeptic\n\n", and
+    // the key is "critic", then this function will return "Skeptic" (Each key
+    // value pair must be by itself between \n's, or the start or end of the
+    // string. The key is not case sensitive.)
+    var regex = new RegExp("(\\n|^)" + key + ":\\s*(.*?)\\s*(\\n|$)", "i");
+
     var match = description.match(regex);
     if (match) {
-        console.log("Found " + key + " in description: " + match[1]);
-        return match[1].substring(0, maxLength);
+        var value = match[2];
+        console.log("Found " + key + " in description: " + value);
+        return value.substring(0, maxLength);
     }
     return null;
 }
