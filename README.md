@@ -1,8 +1,10 @@
-# ManiFans Extension [![](https://img.shields.io/amo/v/manifans.svg?logo=firefox&style=flat)](https://addons.mozilla.org/en-US/firefox/addon/manifans/)
+# ManiFans Extension [![](https://img.shields.io/amo/v/manifans.svg?logo=firefox&style=flat)](https://addons.mozilla.org/en-US/firefox/addon/manifans/) [![](https://img.shields.io/chrome-web-store/v/hkccfpgeafncnjbahmjbkbmclamegmmd?logo=google-chrome)](https://chrome.google.com/webstore/detail/manifans/hkccfpgeafncnjbahmjbkbmclamegmmd?hl=en)
+
+
 
 <img align="left" src="icons/icon128.png" height="65px">
 
-ManiFans is an extension for [Firefox](https://addons.mozilla.org/en-US/firefox/addon/manifans/) and Chrome. It adds a badge to the profile picture of users on [Manifold Markets](https://manifold.markets) who hold the top positions on permanent markets, AKA stock markets. When you hover over this badge, you might see that they are "Aba's #1 Fan", and "AI Singularity's #3 Critic", and you know they've put their mana where their mouth is to secure those titles.
+ManiFans is an extension for [Firefox](https://addons.mozilla.org/en-US/firefox/addon/manifans/) and [Chrome](https://chrome.google.com/webstore/detail/manifans/hkccfpgeafncnjbahmjbkbmclamegmmd?hl=en). It adds a badge to the profile picture of users on [Manifold Markets](https://manifold.markets) who hold the top positions on permanent markets, AKA stock markets. When you hover over this badge, you might see that they are "Aba's #1 Fan", and "AI Singularity's #3 Critic", and you know they've put their mana where their mouth is to secure those titles.
 
 -----------------
 
