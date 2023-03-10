@@ -299,12 +299,18 @@ async function reloadMarkets() {
         // Set displayStrings to be the market question without words in parentheses or braces
         let ma = market.question.replace(/\(.*?\)/g, '').replace(/\[.*?\]/g, '');
 
-        // Set containsStock if the word "stock" is in the question case insensitive
-        var containsStock = ma.match(/stock/i);
-
         // Replace the last instance of the word "stock" with nothing
-        ma = ma.replace(/stock\s*$/i, '');
-        ma = ma.trim();
+        if (ma.match(/stock/i)) {
+            ma = ma.replace(/stock\s*$/i, '');
+            ma = ma.trim();
+        }
+
+        // If the market question ends with "permanent" in any case, remove it
+        if (ma.match(/permanent$/i)) {
+            ma = ma.replace(/permanent\s*$/i, '');
+            ma = ma.trim();
+        }
+
         ma += "'s";
 
         market.displayStrings = {
