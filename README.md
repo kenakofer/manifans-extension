@@ -40,6 +40,11 @@ Once installed, click on the extension icon in your browser to see the status an
 
 
 ### TODO
+    - Faster updates:
+      - Allow for updating hands already on the page.
+      - listen on the API for new bets, then pull updates on markets affected
+      - Do full updates more rarely.
+    - Toggle to hide destiny.gg and related group markets
     - Change icon while inactive/loading
     - Expand the +3 more on click, then force a harder display filter cutoff
     - Save a userToHTML object for faster replacement
@@ -48,6 +53,4 @@ Once installed, click on the extension icon in your browser to see the status an
     - hard to mouse from small image onto hover
     - Solve the disappearing problem on the Positions tab
     - Limit ourselves once API gives that capability
-    - Smart update (listen for new bets on perm markets, only update the data affected)
-
     - Show weighted calibration score on different sides of markets?

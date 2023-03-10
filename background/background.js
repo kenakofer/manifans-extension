@@ -297,11 +297,17 @@ async function reloadMarkets() {
         }
 
         // Set displayStrings to be the market question without words in parentheses or braces
-        let ma = market.question.replace(/\(.*?\)/g, '').replace(/\[.*?\]/g, '');
+        let ma = market.question.replace(/\(.*?\)/g, '').replace(/\[.*?\]/g, '').trim();
 
         // Replace the last instance of the word "stock" with nothing
         if (ma.match(/stock/i)) {
             ma = ma.replace(/stock\s*$/i, '');
+            ma = ma.trim();
+        }
+
+        // If the market question ends with "index" in any case, remove it
+        if (ma.match(/index$/i)) {
+            ma = ma.replace(/index\s*$/i, '');
             ma = ma.trim();
         }
 
