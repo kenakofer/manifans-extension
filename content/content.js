@@ -97,6 +97,129 @@ async function replaceImagesIfNotHidden() {
   await replaceImages(true);
 }
 
+// Initalize hoverTextTables dictionary
+var hoverTextTables = {};
+
+function populateHoverTextTable(imageUsername, userNameToTopPositions, permMarkets, placesToShow) {
+  if (hoverTextTables[imageUsername]) {
+    hoverTextTable = hoverTextTables[imageUsername];
+    return hoverTextTable;
+  }
+
+  hoverTextTable = document.createElement('table');
+  hoverTextTable.classList.add('example-hover-text');
+  document.body.appendChild(hoverTextTable);
+
+  var criticSeparator = false;
+  var yesEllided = 0;
+  var noEllided = 0;
+  var noEntries = 0;
+  var yesEntries = 0;
+
+  var yesEllipsis = null;
+  var noEllipsis = null;
+
+  userNameToTopPositions[imageUsername].forEach((position, i) => {
+    if (position.place > placesToShow) {
+      // console.log('Skipping position', position, 'because it is not in the top', placesToShow);
+      return;
+    }
+    if (position.direction == 'YES') {
+      if (yesEntries >= 10) {
+        yesEllided++;
+        // Create the ellipsis element if it doesn't exist
+        if (!yesEllipsis) {
+          yesEllipsis = document.createElement('span');
+          yesEllipsis.classList.add('ellipsis');
+          hoverTextTable.appendChild(yesEllipsis);
+        }
+        yesEllipsis.textContent = ' +' + yesEllided + " more...";
+        yesEllipsis.appendChild
+        return;
+      }
+      yesEntries++;
+    } else {
+      if (noEntries >= 10) {
+        noEllided++;
+        // Create the ellipsis element if it doesn't exist
+        if (!noEllipsis) {
+          noEllipsis = document.createElement('span');
+          noEllipsis.classList.add('ellipsis');
+          hoverTextTable.appendChild(noEllipsis);
+        }
+        noEllipsis.textContent = ' +' + noEllided + " more...";
+        return;
+      }
+      noEntries++;
+    }
+
+    // Create a new link to this market
+    const link = document.createElement('a');
+    link.href = permMarkets[position.marketId].url;
+    link.classList.add('hover-link');
+
+    // Create a new row in the hover text
+    const hoverTextRow = document.createElement('tr');
+    const emojiColumn = document.createElement('td');
+    const textColumn = document.createElement('td');
+    link.appendChild(textColumn);
+    hoverTextRow.classList.add('inherit-background');
+    emojiColumn.classList.add('manifans-cell');
+    textColumn.classList.add('manifans-cell');
+    hoverTextRow.appendChild(emojiColumn);
+    hoverTextRow.appendChild(textColumn);
+    textColumn.appendChild(link);
+    hoverTextTable.appendChild(hoverTextRow);
+
+    // link.appendChild(emojiColumn);
+
+    // hoverTextRow.appendChild(link);
+
+    // link.target = '_blank'; // open in a new tab
+    // add the class fan-link
+    link.textContent = permMarkets[position.marketId].displayStrings.subject + " #" + position.place +" ";
+    const imageDiv = document.createElement('div');
+    imageDiv.classList.add('tiny-icon');
+    emojiColumn.appendChild(imageDiv);
+
+    if (position.direction == 'YES') {
+      link.textContent += permMarkets[position.marketId].displayStrings.fan;
+      link.classList.add('fan-link');
+      if (position.place == 1) {
+        imageDiv.classList.add('trophy-image');
+      } else {
+        imageDiv.classList.add('trophy-shadow-image');
+      }
+    } else {
+      link.textContent += permMarkets[position.marketId].displayStrings.critic;
+      link.classList.add('critic-link');
+      if (position.place == 1) {
+        imageDiv.classList.add('pepper-image');
+      } else {
+        imageDiv.classList.add('pepper-shadow-image');
+      }
+    }
+    if (position.direction != 'YES' && !criticSeparator && yesEntries > 0) {
+      criticSeparator = true;
+      link.style.marginTop = '10px';
+      emojiColumn.style.paddingTop = '10px';
+    }
+  });
+
+  // Hide the icon if there are no entries
+  if (yesEntries + noEntries == 0) {
+    // console.log('Skipping image with username', imageUsername, 'because there are no entries after filtering');
+    // iconDiv.style.display = 'none';
+    return null;
+  }
+
+
+
+  hoverTextTables[imageUsername] = hoverTextTable;
+  return hoverTextTable;
+}
+
+
 async function replaceImages() {
   // console.log("Replacing images...");
 
@@ -129,13 +252,6 @@ async function replaceImages() {
       continue;
     }
 
-    // Skip if the image has already been replaced
-    if (image.classList.contains('replaced-by-extension')) {
-      // console.log('Skipping image with username', imageUsername, 'because it has already been replaced');
-      continue;
-    }
-    image.classList.add('replaced-by-extension');
-
     // Find any parent divs with the "overflow-hidden" class and remove it
     var parent = image.parentNode;
     while (parent) {
@@ -146,10 +262,25 @@ async function replaceImages() {
       parent = parent.parentNode;
     }
 
-    const wrapper = document.createElement('div');
-    wrapper.style.position = 'relative'; // set position to relative to position the icon correctly
-    image.parentNode.insertBefore(wrapper, image); // insert the wrapper before the image
-    wrapper.appendChild(image); // move the image into the wrapper
+    // Check if the parent has the manifans-wrapper class already
+    parent = image.parentNode;
+    var wrapper;
+    if (parent && parent.classList && parent.classList.contains('manifans-wrapper')) {
+      wrapper = parent;
+      // Delete all children with small-finger-icon or finger-icon class
+      const children = wrapper.childNodes;
+      for (let i = children.length - 1; i >= 0; i--) {
+        if (children[i].classList && (children[i].classList.contains('small-finger-icon') || children[i].classList.contains('finger-icon'))) {
+          wrapper.removeChild(children[i]);
+        }
+      }
+    } else {
+      wrapper = document.createElement('div');
+      wrapper.classList.add('manifans-wrapper');
+      wrapper.style.position = 'relative'; // set position to relative to position the icon correctly
+      image.parentNode.insertBefore(wrapper, image); // insert the wrapper before the image
+      wrapper.appendChild(image); // move the image into the wrapper
+    }
 
     // Create a new element for the icon
     const iconDiv = document.createElement('div');
@@ -161,114 +292,10 @@ async function replaceImages() {
     }
     wrapper.appendChild(iconDiv); // add the icon to the wrapper
 
-    // Create a new element for the hover text
-    const hoverTextTable = document.createElement('table');
-    hoverTextTable.classList.add('example-hover-text');
+    const hoverTextTable = populateHoverTextTable(imageUsername, userNameToTopPositions, permMarkets, placesToShow);
 
-    // Add the hover text to the wrapper
-    wrapper.appendChild(hoverTextTable);
-
-
-
-    var criticSeparator = false;
-    var yesEllided = 0;
-    var noEllided = 0;
-    var noEntries = 0;
-    var yesEntries = 0;
-
-    var yesEllipsis = null;
-    var noEllipsis = null;
-
-    userNameToTopPositions[imageUsername].forEach((position, i) => {
-      if (position.place > placesToShow) {
-        // console.log('Skipping position', position, 'because it is not in the top', placesToShow);
-        return;
-      }
-      if (position.direction == 'YES') {
-        if (yesEntries >= 10) {
-          yesEllided++;
-          // Create the ellipsis element if it doesn't exist
-          if (!yesEllipsis) {
-            yesEllipsis = document.createElement('span');
-            yesEllipsis.classList.add('ellipsis');
-            hoverTextTable.appendChild(yesEllipsis);
-          }
-          yesEllipsis.textContent = ' +' + yesEllided + " more...";
-          yesEllipsis.appendChild
-          return;
-        }
-        yesEntries++;
-      } else {
-        if (noEntries >= 10) {
-          noEllided++;
-          // Create the ellipsis element if it doesn't exist
-          if (!noEllipsis) {
-            noEllipsis = document.createElement('span');
-            noEllipsis.classList.add('ellipsis');
-            hoverTextTable.appendChild(noEllipsis);
-          }
-          noEllipsis.textContent = ' +' + noEllided + " more...";
-          return;
-        }
-        noEntries++;
-      }
-
-      // Create a new link to this market
-      const link = document.createElement('a');
-      link.href = permMarkets[position.marketId].url;
-      link.classList.add('hover-link');
-
-      // Create a new row in the hover text
-      const hoverTextRow = document.createElement('tr');
-      const emojiColumn = document.createElement('td');
-      const textColumn = document.createElement('td');
-      link.appendChild(textColumn);
-      hoverTextRow.classList.add('inherit-background');
-      emojiColumn.classList.add('manifans-cell');
-      textColumn.classList.add('manifans-cell');
-      hoverTextRow.appendChild(emojiColumn);
-      hoverTextRow.appendChild(textColumn);
-      textColumn.appendChild(link);
-      hoverTextTable.appendChild(hoverTextRow);
-
-      // link.appendChild(emojiColumn);
-
-      // hoverTextRow.appendChild(link);
-
-      // link.target = '_blank'; // open in a new tab
-      // add the class fan-link
-      link.textContent = permMarkets[position.marketId].displayStrings.subject + " #" + position.place +" ";
-      const imageDiv = document.createElement('div');
-      imageDiv.classList.add('tiny-icon');
-      emojiColumn.appendChild(imageDiv);
-
-      if (position.direction == 'YES') {
-        link.textContent += permMarkets[position.marketId].displayStrings.fan;
-        link.classList.add('fan-link');
-        if (position.place == 1) {
-          imageDiv.classList.add('trophy-image');
-        } else {
-          imageDiv.classList.add('trophy-shadow-image');
-        }
-      } else {
-        link.textContent += permMarkets[position.marketId].displayStrings.critic;
-        link.classList.add('critic-link');
-        if (position.place == 1) {
-          imageDiv.classList.add('pepper-image');
-        } else {
-          imageDiv.classList.add('pepper-shadow-image');
-        }
-      }
-      if (position.direction != 'YES' && !criticSeparator && yesEntries > 0) {
-        criticSeparator = true;
-        link.style.marginTop = '10px';
-        emojiColumn.style.paddingTop = '10px';
-      }
-    });
-
-    // Hide the icon if there are no entries
-    if (yesEntries + noEntries == 0) {
-      // console.log('Skipping image with username', imageUsername, 'because there are no entries after filtering');
+    if (!hoverTextTable) {
+      // Don't show icon (all hover text entries were filtered out)
       iconDiv.style.display = 'none';
       continue;
     }
@@ -277,6 +304,19 @@ async function replaceImages() {
       hoverTextTable.style.display = 'block';
       hoverTextTable.style.zIndex = '10000';
       iconDiv.style.zIndex = '10001';
+
+      // Note that hoverTextTable is fixed position. Move it to the iconDiv's absolute position on the screen
+      hoverTextTable.style.left = iconDiv.getBoundingClientRect().left + document.body.scrollLeft + 'px';
+      hoverTextTable.style.top = iconDiv.getBoundingClientRect().top + document.body.scrollTop + 25 + 'px';
+
+      // If the bottom of the hover text table is below the bottom of the screen, move it up
+      const hoverTextTableBottom = hoverTextTable.getBoundingClientRect().bottom + document.body.scrollTop;
+      const screenBottom = window.innerHeight;
+      if (hoverTextTableBottom > screenBottom) {
+        hoverTextTable.style.top = hoverTextTable.getBoundingClientRect().top - (hoverTextTableBottom - screenBottom) + 'px';
+        // Move right as well so the finger still shows
+        hoverTextTable.style.left = hoverTextTable.getBoundingClientRect().left + 20 + 'px';
+      }
     });
 
     iconDiv.addEventListener('mouseleave', () => {
@@ -285,18 +325,15 @@ async function replaceImages() {
       iconDiv.style.zIndex = '9999';
     });
 
-    // add event listeners to the market info div to keep it displayed when the user hovers over it
+    // add event listeners to the hoverTextTable to keep it displayed when the user hovers over it
     hoverTextTable.addEventListener('mouseenter', () => {
       hoverTextTable.style.display = 'block';
-      hoverTextTable.style.zIndex = '10000';
-      iconDiv.style.zIndex = '10001';
+      hoverTextTable.style.zIndex = '9999';
     });
     hoverTextTable.addEventListener('mouseleave', () => {
       hoverTextTable.style.display = 'none';
       hoverTextTable.style.zIndex = '9998';
-      iconDiv.style.zIndex = '9999';
     });
-
     // prevent the event from bubbling up to the parent img element
     hoverTextTable.addEventListener('mouseover', (event) => {
       event.stopPropagation();
