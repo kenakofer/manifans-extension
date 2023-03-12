@@ -162,8 +162,8 @@ function insertSorted(array, position, key) {
     }
 }
 
-async function getTopUsersInMarket(market_id, spots, userNameToTopPositions, marketMap) {
-    console.log("Fetching positions for market " + market_id);
+async function getTopUsersInMarket(market_id, spots, userNameToTopPositions, marketMap, ensureNoDuplicates = false) {
+    // console.log("Fetching positions for market " + market_id);
     const market = marketMap[market_id];
 
     var best = { YES: [], NO: [] };
@@ -187,6 +187,16 @@ async function getTopUsersInMarket(market_id, spots, userNameToTopPositions, mar
             }
         });
     });
+
+    // For each username in userNameToTopPositions, clear out entries with market_id
+    if (ensureNoDuplicates) {
+        console.log("Ensuring no duplicates for market " + market_id);
+        Object.keys(userNameToTopPositions).forEach((username) => {
+            userNameToTopPositions[username] = userNameToTopPositions[username].filter((position) => {
+                return position.marketId != market_id;
+            });
+        });
+    }
 
     // Now we have the top positions for each side of the market
     // Add these top users to the userNameToTopPositions object
@@ -215,7 +225,7 @@ async function buildUserNameToTopPositions(spots, marketMap) {
         var batchedFetches = [];
         for (var m = 0; batch+m < market_ids.length && m < MARKET_FETCH_BATCH_SIZE; m++) {
             const market_id = market_ids[batch + m];
-            batchedFetches.push(getTopUsersInMarket(market_id, spots, userNameToTopPositions, marketMap));
+            batchedFetches.push(getTopUsersInMarket(market_id, spots, userNameToTopPositions, marketMap, ensureNoDuplicates = false));
         };
         console.log("Running batch " + batch + "/" + market_ids.length);
         if (batch % 5 == 0) {
