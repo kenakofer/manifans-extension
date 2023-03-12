@@ -58,7 +58,7 @@ setInterval( async () => {
     cachedPlacesToShow = placesToShow;
   }
   replaceImagesIfNotHidden();
-}, 2000);
+}, 3000);
 
 async function store(key, value) {
   await chrome.storage.local.set({[key]: value}).then(() => {});
@@ -100,15 +100,25 @@ async function replaceImagesIfNotHidden() {
 // Initalize hoverTextTables dictionary
 var hoverTextTables = {};
 
-function populateHoverTextTable(imageUsername, userNameToTopPositions, permMarkets, placesToShow) {
+function populateHoverTextTable(imageUsername, userNameToTopPositions, permMarkets, placesToShow, forceReload=false) {
+  var hoverTextTable;
+
   if (hoverTextTables[imageUsername]) {
     hoverTextTable = hoverTextTables[imageUsername];
-    return hoverTextTable;
+    if (!forceReload) {
+      return hoverTextTable;
+    }
+    // Remove all children
+    while (hoverTextTable.firstChild) {
+      hoverTextTable.removeChild(hoverTextTable.firstChild);
+    }
+  } else {
+    hoverTextTable = document.createElement('table');
+    hoverTextTable.classList.add('example-hover-text');
+    document.body.appendChild(hoverTextTable);
   }
 
-  hoverTextTable = document.createElement('table');
-  hoverTextTable.classList.add('example-hover-text');
-  document.body.appendChild(hoverTextTable);
+  // We have a fresh, empty hoverTextTable
 
   var criticSeparator = false;
   var yesEllided = 0;
@@ -220,7 +230,7 @@ function populateHoverTextTable(imageUsername, userNameToTopPositions, permMarke
 }
 
 
-async function replaceImages() {
+async function replaceImages(forceReload=false) {
   // console.log("Replacing images...");
 
   // Load userNameToTopPositions from local storage
@@ -292,7 +302,7 @@ async function replaceImages() {
     }
     wrapper.appendChild(iconDiv); // add the icon to the wrapper
 
-    const hoverTextTable = populateHoverTextTable(imageUsername, userNameToTopPositions, permMarkets, placesToShow);
+    const hoverTextTable = populateHoverTextTable(imageUsername, userNameToTopPositions, permMarkets, placesToShow, forceReload);
 
     if (!hoverTextTable) {
       // Don't show icon (all hover text entries were filtered out)
