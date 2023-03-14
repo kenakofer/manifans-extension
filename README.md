@@ -40,17 +40,10 @@ Once installed, click on the extension icon in your browser to see the status an
 
 
 ### TODO
-    - Faster updates:
-      - Allow for updating hands already on the page.
-      - listen on the API for new bets, then pull updates on markets affected
-      - Do full updates more rarely.
-    - Toggle to hide destiny.gg and related group markets
+    - Adjust badge size/positioning
     - Change icon while inactive/loading
     - Expand the +3 more on click, then force a harder display filter cutoff
-    - Save a userToHTML object for faster replacement
     - Make popup have nicer button
     - Change "chance" and "probability" to "favorable" or "good". Maybe YES and NO as well?
     - hard to mouse from small image onto hover
-    - Solve the disappearing problem on the Positions tab
     - Limit ourselves once API gives that capability
-    - Show weighted calibration score on different sides of markets?

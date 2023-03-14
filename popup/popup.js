@@ -6,6 +6,7 @@ PLACES_TO_SHOW_KEY = EXTENSION_PREFIX + 'places-to-show';
 UPDATE_NOW_KEY = EXTENSION_PREFIX + 'update-now';
 TIME_OF_LAST_UPDATE_KEY = EXTENSION_PREFIX + 'time-of-last-update';
 BACKGROUND_HEARTBEAT_KEY = EXTENSION_PREFIX + 'background-heartbeat';
+IGNORE_DESTINY_KEY = EXTENSION_PREFIX + 'ignore-destiny';
 
 LOAD_STATUS_KEY = EXTENSION_PREFIX + 'load-status';
 
@@ -31,6 +32,15 @@ document.querySelector('#places-to-show').addEventListener('input', async() => {
     document.querySelector('#places-to-show-value').textContent = value;
     await store(PLACES_TO_SHOW_KEY, value);
     console.log(PLACES_TO_SHOW_KEY + ": " + value);
+});
+
+// Ignore destiny markets checkbox
+document.querySelector('#ignore-destiny-markets').addEventListener('change', async() => {
+    const value = document.querySelector('#ignore-destiny-markets').checked;
+    await store(IGNORE_DESTINY_KEY, value);
+    console.log(IGNORE_DESTINY_KEY + ": " + value);
+    // Trigger a full update to remove/add destiny markets
+    store(UPDATE_NOW_KEY, true);
 });
 
 // Button to update
@@ -80,6 +90,16 @@ async function setSliderValueFromStorage() {
         console.log('placesToShow loading at ' + result);
         document.querySelector('#places-to-show').value = result;
         document.querySelector('#places-to-show-value').textContent = result;
+    }
+}
+
+setIgnoreDestinyFromStorage();
+setInterval(setIgnoreDestinyFromStorage, 2000);
+async function setIgnoreDestinyFromStorage() {
+    result = await get(IGNORE_DESTINY_KEY);
+    if (result !== undefined) {
+        console.log('ignoreDestiny loading at ' + result);
+        document.querySelector('#ignore-destiny-markets').checked = result;
     }
 }
 

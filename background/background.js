@@ -14,16 +14,27 @@ TIME_OF_LAST_PAGE_LOAD_KEY = EXTENSION_PREFIX + 'time-of-last-page-load';
 BACKGROUND_HEARTBEAT_KEY = EXTENSION_PREFIX + 'background-heartbeat';
 LOAD_STATUS_KEY = EXTENSION_PREFIX + 'load-status';
 LAST_BET_ID_KEY = EXTENSION_PREFIX + 'last-bet-id';
+IGNORE_DESTINY_KEY = EXTENSION_PREFIX + 'ignore-destiny';
 
 NECESSARY_MARKET_KEYS = ['url', 'displayStrings', 'totalLiquidity'];
 
 PERMANENT_GROUP_ID = '2T4mM0N5az2lYcaN5G50';
-FETCH_PERM_MARKETS_URL = 'https://manifold.markets/api/v0/group/by-id/' + PERMANENT_GROUP_ID + '/markets';
+MARKETS_IN_GROUP_URL = 'https://manifold.markets/api/v0/group/by-id/ID/markets';
 MANIFANS_GROUP_ID = '3cpr3RrU1ZCe19JQGIRK';
-FETCH_MANIFANS_MARKETS_URL = 'https://manifold.markets/api/v0/group/by-id/' + MANIFANS_GROUP_ID + '/markets';
 FETCH_POSITIONS_URL = 'https://manifold.markets/api/v0/market/ID/positions';
 FETCH_MARKET_DESCRIPTION_URL = 'https://manifold.markets/api/v0/market/ID';
 FETCH_BETS_URL = 'https://manifold.markets/api/v0/bets';
+
+RELEVANT_GROUPS = [
+    '2T4mM0N5az2lYcaN5G50', // manifold.markets/group/permanent
+    '3cpr3RrU1ZCe19JQGIRK', // manifold.markets/group/manifans
+    'jhtvaP3PHXY6RPIiMd8A', // manifold.markets/group/destinygg-stocks
+]
+
+DESTINY_GROUPS = [
+    'W2ES30fRo6CCbPNwMTTj', // manifold.markets/group/destinygg
+    'jhtvaP3PHXY6RPIiMd8A', // manifold.markets/group/destinygg-stocks
+]
 
 
 // Use chrome in chrome, and browser in firefox
@@ -113,6 +124,10 @@ async function fillInMissingData() {
 
     var secondsSinceUpdate = (Date.now() - timeOfLastUpdate) / 1000;
 
+    if (marketMap && Object.keys(marketMap).length == 0) {
+        marketMap = null;
+    }
+
     // Been a long time or never, so do full update
     if (updateNow || !timeOfLastUpdate || secondsSinceUpdate > FULL_RELOAD_AFTER_SECONDS) {
         // Invalidate the variables, but not the storage
@@ -148,7 +163,7 @@ async function fillInMissingData() {
         marketMap = await reloadMarkets();
     }
     if (marketMap && !userNameToTopPositions) {
-
+        console.log('Perm user positions not found in storage, fetching from API...');
         latestBets = await fetchBets(1);
         // Store the new latest bet id (no need to wait)
         store(LAST_BET_ID_KEY, latestBets[0].id);
@@ -202,7 +217,7 @@ function getChangedMarketIdsFromBets(bets, marketMap) {
 }
 
 async function fetchBets(count, beforeId=false) {
-    console.log("Fetching " + count + " bets before " + beforeId);
+    // console.log("Fetching " + count + " bets before " + beforeId);
     var url = FETCH_BETS_URL;
     url += '?limit=' + count;
     if (beforeId) {
@@ -210,7 +225,6 @@ async function fetchBets(count, beforeId=false) {
     }
     const betsResponse = await fetch(url);
     const bets = await betsResponse.json();
-    console.log(bets);
     return bets;
 }
 
@@ -220,7 +234,6 @@ async function fetchBetsSince(sinceId) {
     var limitAmounts = [100,1000]; // Try 100 bets to start, then 1000 bets
     for (var l = 0; l < limitAmounts.length; l++) {
         var newBets = await fetchBets(limitAmounts[l], lastBetId);
-        console.log("Searching for bet " + sinceId + " in " + newBets.length + " bets");
         // Iterate newBets with for loop so we can break out of the loop
         for (var i = 0; i < newBets.length; i++) {
             var bet = newBets[i];
@@ -230,8 +243,10 @@ async function fetchBetsSince(sinceId) {
             }
             bets.push(bet);
         }
+        console.log("Couldn't find bet " + sinceId + " in " + newBets.length + " bets");
         lastBetId = newBets[newBets.length - 1].id;
     }
+    console.log("Giving up on finding bet " + sinceId);
 
     // If we didn't find the bet, return null (We'll have to do a full update)
     return null;
@@ -393,24 +408,60 @@ async function buildUserNameToTopPositions(spots, marketMap, useExistingUsername
     }
 }
 
+function getMarketsInGroupUrl(group_id) {
+    // Replace ID in MARKETS_IN_GROUP_URL
+    return MARKETS_IN_GROUP_URL.replace('ID', group_id);
+}
+
 //function to reload all market data
 async function reloadMarkets() {
     console.log('reloadMarkets()');
     // Get the full list of markets, sifting through them for the permanent binary ones
-    marketMap = {};
+    var marketMap = {};
+    var markets = {};
+    var i = 0;
 
-    const permMarketResponse = await fetch(FETCH_PERM_MARKETS_URL);
-    // Wait for the response to be parsed before continuing
-    var markets = await permMarketResponse.json();
+    // Use for loop to loop over relevant groups
+    for (var g = 0; g < RELEVANT_GROUPS.length; g++) {
+        const group_id = RELEVANT_GROUPS[g];
+        const marketResponse = await fetch(getMarketsInGroupUrl(group_id));
+        // Wait for the response to be parsed before continuing
+        var groupMarkets = await marketResponse.json();
+        console.log(groupMarkets);
 
-    const manifansMarketResponse = await fetch(FETCH_MANIFANS_MARKETS_URL);
-    // Wait for the response to be parsed before continuing
-    markets = markets.concat(await manifansMarketResponse.json());
+        groupMarkets.forEach((market) => {
+            i++;
+            markets[market.id] = market;
+        });
+    };
+    console.log("Fetched " + i + " markets from relevant groups");
+
+    // If destiny markets are being ignored, fetch those market ids and exclude them
+    ignore_destiny_markets = await get(IGNORE_DESTINY_KEY);
+    if (ignore_destiny_markets) {
+        i = 0;
+        console.log("Ignoring destiny markets");
+        for (var g = 0; g < DESTINY_GROUPS.length; g++) {
+            const group_id = DESTINY_GROUPS[g];
+            const destinyMarketResponse = await fetch(getMarketsInGroupUrl(group_id));
+            const destiny_markets = await destinyMarketResponse.json();
+            destiny_markets.forEach((market) => {
+                if (market.id in markets) {
+                    i++;
+                    delete markets[market.id];
+                }
+            });
+        }
+        console.log("Deleted " + i + " destiny markets");
+    }
+
+    console.log(markets);
 
 
-    // Loop with a traditional for loop so we can use await inside the loop
-    for (var i = 0; i < markets.length; i++) {
-        const market = markets[i];
+    // Loop over the keys in markets
+    for (const market_id in markets) {
+        // console.log("Processing market " + market_id)
+        const market = markets[market_id];
 
         // Only binary markets
         if (market.outcomeType !== 'BINARY') {
@@ -421,11 +472,6 @@ async function reloadMarkets() {
         if (market.isResolved) {
             continue;
         }
-
-        // Only markets with permanent in the question
-        // if (!market.question.includes('(Permanent)') && !market.question.includes('[Permanent]')) {
-        //     continue;
-        // }
 
         // market.textDescription is only available with an additional API call,
         // so only do it if we think it'll really help with display, if it's not
@@ -468,7 +514,6 @@ async function reloadMarkets() {
         };
 
         // Check if each key is in the list of keys to keep (save id to use for the key)
-        var market_id = market.id;
         for (var key in market) {
             if (!NECESSARY_MARKET_KEYS.includes(key)) {
                 delete market[key];
