@@ -40,18 +40,24 @@ document.querySelector('#ignore-destiny-markets').addEventListener('change', asy
     await store(IGNORE_DESTINY_KEY, value);
     console.log(IGNORE_DESTINY_KEY + ": " + value);
     // Trigger a full update to remove/add destiny markets
+    document.querySelector('#load-status-label').textContent = 'Fetching market list...';
     store(UPDATE_NOW_KEY, true);
+    store(LOAD_STATUS_KEY, {
+        percent: 0,
+        display: 'block',
+        message: 'Fetching market list...'
+    });
 });
 
 // Button to update
 document.querySelector('#update-button').addEventListener('click', () => {
+    // Trigger a full update to remove/add destiny markets
+    document.querySelector('#load-status-label').textContent = 'Fetching market list...';
     store(UPDATE_NOW_KEY, true);
-    document.querySelector('#load-status-label').textContent = 'Getting ready to sync...';
-    // Also store in LOAD_STATUS_KEY
     store(LOAD_STATUS_KEY, {
         percent: 0,
         display: 'block',
-        message: 'Getting ready to sync...'
+        message: 'Fetching market list...'
     });
 });
 
@@ -87,7 +93,6 @@ setInterval(setSliderValueFromStorage, 2000);
 async function setSliderValueFromStorage() {
     result = await get(PLACES_TO_SHOW_KEY);
     if (result) {
-        console.log('placesToShow loading at ' + result);
         document.querySelector('#places-to-show').value = result;
         document.querySelector('#places-to-show-value').textContent = result;
     }
@@ -98,7 +103,6 @@ setInterval(setIgnoreDestinyFromStorage, 2000);
 async function setIgnoreDestinyFromStorage() {
     result = await get(IGNORE_DESTINY_KEY);
     if (result !== undefined) {
-        console.log('ignoreDestiny loading at ' + result);
         document.querySelector('#ignore-destiny-markets').checked = result;
     }
 }

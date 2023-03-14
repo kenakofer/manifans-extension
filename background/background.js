@@ -172,10 +172,12 @@ async function fillInMissingData() {
     }
     else if (marketMap && userNameToTopPositions) {
         // Update status to done (no need to wait)
-        store(LOAD_STATUS_KEY, {
-            percent: 1.0,
-            display: "inline-block",
-            message: Object.keys(marketMap).length + " markets, " + Object.keys(userNameToTopPositions).length + " users"});
+        if (!updateNow) {
+            store(LOAD_STATUS_KEY, {
+                percent: 1.0,
+                display: "inline-block",
+                message: Object.keys(marketMap).length + " markets, " + Object.keys(userNameToTopPositions).length + " users"});
+        }
     }
 }
 
