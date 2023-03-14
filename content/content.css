@@ -1,9 +1,9 @@
 .finger-icon {
   position: absolute;
-  top: 12px;
-  left: -12px;
-  width: 25px;
-  height: 32px;
+  top: 15px;
+  left: -11px;
+  width: 22px;
+  height: 28px;
   background-image: url('foam-hand.png'), url('chrome-extension://__MSG_@@extension_id__/content/foam-hand.png');
   background-size: cover;
   z-index: 9999;
@@ -15,10 +15,10 @@
 
 .small-finger-icon {
   position: absolute;
-  top: 4px;
-  left: -15px;
-  width: 22px;
-  height: 28px;
+  top: 9px;
+  left: -13px;
+  width: 19px;
+  height: 24px;
   background-image: url('foam-hand.png'), url('chrome-extension://__MSG_@@extension_id__/content/foam-hand.png');
   background-size: cover;
   z-index: 9999;

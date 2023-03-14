@@ -317,15 +317,15 @@ async function replaceImages(forceReload=false) {
 
       // Note that hoverTextTable is fixed position. Move it to the iconDiv's absolute position on the screen
       hoverTextTable.style.left = iconDiv.getBoundingClientRect().left + document.body.scrollLeft + 'px';
-      hoverTextTable.style.top = iconDiv.getBoundingClientRect().top + document.body.scrollTop + 25 + 'px';
+      hoverTextTable.style.top = iconDiv.getBoundingClientRect().bottom + document.body.scrollTop - 1 + 'px';
 
       // If the bottom of the hover text table is below the bottom of the screen, move it up
       const hoverTextTableBottom = hoverTextTable.getBoundingClientRect().bottom + document.body.scrollTop;
       const screenBottom = window.innerHeight;
       if (hoverTextTableBottom > screenBottom) {
         hoverTextTable.style.top = hoverTextTable.getBoundingClientRect().top - (hoverTextTableBottom - screenBottom) + 'px';
-        // Move right as well so the finger still shows
-        hoverTextTable.style.left = hoverTextTable.getBoundingClientRect().left + 20 + 'px';
+        // Move to the right of the finger
+        hoverTextTable.style.left = iconDiv.getBoundingClientRect().right - 1 + 'px';
       }
     });
 
