@@ -43,7 +43,6 @@ Once installed, click on the extension icon in your browser to see the status an
     - Adjust badge size/positioning
     - Change icon while inactive/loading
     - Expand the +3 more on click, then force a harder display filter cutoff
-    - Make popup have nicer button
     - Change "chance" and "probability" to "favorable" or "good". Maybe YES and NO as well?
     - hard to mouse from small image onto hover
     - Limit ourselves once API gives that capability

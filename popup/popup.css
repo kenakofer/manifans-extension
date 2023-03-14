@@ -14,7 +14,8 @@ h1 {
     /* vertically center */
     display: flex;
     align-items: center;
-    margin: 20px 0;
+    margin: 10px;
+    margin-bottom: 20px;
 }
 
 table {
@@ -22,15 +23,24 @@ table {
     border-collapse: collapse;
 }
 
+td {
+    padding-top: 5px;
+}
+
+.right {
+    text-align: right;
+}
+
+.padtop {
+    padding-top: 15px;
+}
+
 .github-icon {
     width: 30px;
     height: 30px;
-    /* align right */
-    margin-left: auto;
-
-    /* vertically center */
-    display: flex;
-    align-items: center;
+    position: absolute;
+    top: 10px;
+    right: 10px;
 }
 
 .refresh-note {
@@ -48,7 +58,7 @@ table {
     transform: translate(-50%, -50%);
     font-size: 1rem;
     font-weight: 600;
-    color: white;
+    color: #CCC;
     text-shadow: 1px 2px black;
 }
 
@@ -58,7 +68,7 @@ table {
     height: 25px;
     background-color: #959595;
     border-radius: 5px;
-    border: solid 1px #B1B1C7;
+    border: solid 2px #B1B1C7;
 
 }
 
@@ -67,4 +77,24 @@ table {
     height: 25px;
     background-color: #4338CA;
     border-radius: 5px;
+}
+
+/* A stylized button with blue rounded outline that fills with blue on hover */
+button {
+    background-color: #FFFFFF;
+    border: 2px solid #4338CA;
+    border-radius: 5px;
+    color: #4338CA;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #4338CA;
+    color: #FFFFFF;
 }
