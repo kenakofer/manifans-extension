@@ -485,30 +485,71 @@ async function reloadMarkets() {
         }
 
         // Set displayStrings to be the market question without words in parentheses or braces
-        let ma = market.question.replace(/\(.*?\)/g, '').replace(/\[.*?\]/g, '').trim();
+        let subject = market.question.replace(/\(.*?\)/g, '').replace(/\[.*?\]/g, '').trim();
 
-        // Replace the last instance of the word "stock" with nothing
-        if (ma.match(/stock/i)) {
-            ma = ma.replace(/stock\s*$/i, '');
-            ma = ma.trim();
+        var removed = true;
+
+        for (var r = 0; r < 10; r++) {
+            removed = false;
+
+            // Replace the last instance of the word "stock" with nothing
+            if (subject.match(/stock/i)) {
+                subject = subject.replace(/stock$/i, '');
+                subject = subject.trim();
+                removed = true;
+            }
+
+            // If the market question ends with "index" in any case, remove it
+            if (subject.match(/index$/i)) {
+                subject = subject.replace(/index$/i, '');
+                subject = subject.trim();
+                removed = true;
+            }
+
+            // If the market question ends with "permanent" in any case, remove it
+            if (subject.match(/permanent$/i)) {
+                subject = subject.replace(/permanent$/i, '');
+                subject = subject.trim();
+                removed = true;
+            }
+
+            // If the market ends with a word with only non-alphanumeric characters, remove it
+            if (subject.match(/ \W+$/)) {
+                subject = subject.replace(/ \W+$/, '');
+                subject = subject.trim();
+                removed = true;
+            }
+
+            // Remove trailing periods, commas, colons, and semicolons
+            if (subject.match(/[\.,:;]$/)) {
+                subject = subject.replace(/[\.,:;]$/, '');
+                subject = subject.trim();
+                removed = true;
+            }
+
+            if (!removed) {
+                break;
+            }
         }
 
-        // If the market question ends with "index" in any case, remove it
-        if (ma.match(/index$/i)) {
-            ma = ma.replace(/index\s*$/i, '');
-            ma = ma.trim();
+        // Special case ;)
+        if (market.question == "Permanent Stock stock [permanent]") {
+            subject = "Permanent Stock";
         }
 
-        // If the market question ends with "permanent" in any case, remove it
-        if (ma.match(/permanent$/i)) {
-            ma = ma.replace(/permanent\s*$/i, '');
-            ma = ma.trim();
+        // Load from description if specified
+        subject = extractFromDescription("subject", market.textDescription, 20) || subject
+
+        // If length of subject is 0 or too long, skip this market
+        if (subject.length == 0 || subject.length > 40) {
+            console.log("Skipping market " + market.question + " because subject is " + subject + " (" + subject.length + " characters)");
+            continue;
         }
 
-        ma += "'s";
+        subject += "'s";
 
         market.displayStrings = {
-            subject: extractFromDescription("subject", market.textDescription, 20) || ma,
+            subject: subject,
             fan: extractFromDescription("fan", market.textDescription, 15) || "Fan!",
             critic: extractFromDescription("critic", market.textDescription, 15) || "Critic"
         };
