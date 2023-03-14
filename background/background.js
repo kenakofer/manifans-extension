@@ -151,8 +151,11 @@ async function fillInMissingData() {
             marketIds = getChangedMarketIdsFromBets(newBets, marketMap);
             if (marketIds && marketIds.length > 0) {
                 // Sleep 10 seconds to allow the API to catch up
-                console.log("Sleeping 15 seconds to allow API to catch up");
-                await sleep(15 * 1000);
+                console.log("Sleeping 10 seconds to allow API to catch up");
+                await sleep(10 * 1000);
+                await buildUserNameToTopPositions(TOP_SPOTS_TO_LOAD, marketMap, userNameToTopPositions, marketIds);
+                console.log("Sleeping 20 more seconds to allow API to catch up");
+                await sleep(20 * 1000);
                 await buildUserNameToTopPositions(TOP_SPOTS_TO_LOAD, marketMap, userNameToTopPositions, marketIds);
             }
         }
