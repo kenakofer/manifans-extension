@@ -221,6 +221,39 @@ function getChangedMarketIdsFromBets(bets, marketMap) {
     return marketIds;
 }
 
+async function retryFetch(url) {
+    var retries = 0;
+    var maxRetries = 5;
+    var response;
+    while (retries < maxRetries) {
+        // Catch errors and check for error responses
+        try {
+            response = await fetch(url);
+            if (response.ok) {
+                break;
+            } else {
+                console.warn("Error fetching " + url + ": " + response.status + " " + response.statusText);
+            }
+        } catch (error) {
+            console.warn("Error fetching " + url + ": " + error);
+        }
+
+        retries++;
+        if (retries == maxRetries) {
+            console.warn("Failed to fetch " + url + " after " + maxRetries + " retries");
+            return null;
+        }
+
+        // Sleep for increasing amounts of time between retries (1, 4, 9, 16, etc seconds)
+        var sleepTime = retries*retries;
+        console.log("Sleeping " + sleepTime + " seconds before retrying fetch of " + url);
+        await sleep(sleepTime * 1000);
+        console.log("Retrying fetch of " + url + " (retry " + retries + ")");
+    }
+
+    return response;
+}
+
 async function fetchBets(count, beforeId=false) {
     // console.log("Fetching " + count + " bets before " + beforeId);
     var url = FETCH_BETS_URL;
@@ -228,7 +261,7 @@ async function fetchBets(count, beforeId=false) {
     if (beforeId) {
         url += '&before=' + beforeId;
     }
-    const betsResponse = await fetch(url);
+    const betsResponse = await retryFetch(url);
     const bets = await betsResponse.json();
     return bets;
 }
@@ -272,7 +305,7 @@ async function partialUpdate(marketMap, userNameToTopPositions) {
     var marketIdsToUpdate = [];
 
     // Fetch bets from API
-    const betsResponse = await fetch(FETCH_BETS_URL);
+    const betsResponse = await retryFetch(FETCH_BETS_URL);
     const bets = await betsResponse.json();
     bets.forEach((bet) => {
         if (bet.contract_id in marketMap) {
@@ -282,7 +315,7 @@ async function partialUpdate(marketMap, userNameToTopPositions) {
 }
 
 async function getTopUsersInMarket(market_id, spots, userNameToTopPositions, marketMap, ensureNoDuplicates = false) {
-    console.log("Fetching positions for market " + market_id);
+    // console.log("Fetching positions for market " + market_id);
     const market = marketMap[market_id];
 
     var best = { YES: [], NO: [] };
@@ -293,7 +326,7 @@ async function getTopUsersInMarket(market_id, spots, userNameToTopPositions, mar
     }
 
     // Wait for the response before continuing
-    const positionsResponse = await fetch(getPositionsUrl(market_id));
+    const positionsResponse = await retryFetch(getPositionsUrl(market_id));
 
     // Wait for the response to be parsed before continuing
     var positions = await positionsResponse.json();
@@ -315,11 +348,11 @@ async function getTopUsersInMarket(market_id, spots, userNameToTopPositions, mar
 
     // For each username in userNameToTopPositions, clear out entries with market_id
     if (ensureNoDuplicates) {
-        console.log("Ensuring no duplicates for market " + market_id);
+        // console.log("Ensuring no duplicates for market " + market_id);
         Object.keys(userNameToTopPositions).forEach((username) => {
             userNameToTopPositions[username] = userNameToTopPositions[username].filter((position) => {
                 if (position.marketId == market_id) {
-                    console.log("Removing duplicate position for " + username + " in market " + market_id);
+                    // console.log("Removing duplicate position for " + username + " in market " + market_id);
                 }
                 return position.marketId != market_id;
             });
@@ -429,7 +462,7 @@ async function reloadMarkets() {
     // Use for loop to loop over relevant groups
     for (var g = 0; g < RELEVANT_GROUPS.length; g++) {
         const group_id = RELEVANT_GROUPS[g];
-        const marketResponse = await fetch(getMarketsInGroupUrl(group_id));
+        const marketResponse = await retryFetch(getMarketsInGroupUrl(group_id));
         // Wait for the response to be parsed before continuing
         var groupMarkets = await marketResponse.json();
         console.log(groupMarkets);
@@ -448,7 +481,7 @@ async function reloadMarkets() {
         console.log("Ignoring destiny markets");
         for (var g = 0; g < DESTINY_GROUPS.length; g++) {
             const group_id = DESTINY_GROUPS[g];
-            const destinyMarketResponse = await fetch(getMarketsInGroupUrl(group_id));
+            const destinyMarketResponse = await retryFetch(getMarketsInGroupUrl(group_id));
             const destiny_markets = await destinyMarketResponse.json();
             destiny_markets.forEach((market) => {
                 if (market.id in markets) {
@@ -483,7 +516,7 @@ async function reloadMarkets() {
         // a "stock"
         if (!market.question.match(/stock/i)) {
             // Fetch market description data from the API
-            const marketDescriptionResponse = await fetch(getMarketDescriptionUrl(market.id));
+            const marketDescriptionResponse = await retryFetch(getMarketDescriptionUrl(market.id));
             // Wait for the response to be parsed before continuing
             const marketDescription = await marketDescriptionResponse.json();
             market.textDescription = marketDescription.textDescription;
