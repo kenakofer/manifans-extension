@@ -26,8 +26,8 @@ FETCH_MARKET_DESCRIPTION_URL = 'https://manifold.markets/api/v0/market/ID';
 FETCH_BETS_URL = 'https://manifold.markets/api/v0/bets';
 
 RELEVANT_GROUPS = [
-    '2T4mM0N5az2lYcaN5G50', // manifold.markets/group/permanent
     '3cpr3RrU1ZCe19JQGIRK', // manifold.markets/group/manifans
+    '2T4mM0N5az2lYcaN5G50', // manifold.markets/group/permanent
     'jhtvaP3PHXY6RPIiMd8A', // manifold.markets/group/destinygg-stocks
 ]
 
@@ -470,6 +470,10 @@ async function reloadMarkets() {
         groupMarkets.forEach((market) => {
             i++;
             markets[market.id] = market;
+            // If g==0, this is the first group, so add a special flag to these markets
+            if (g == 0) {
+                market.markedManifans = true;
+            }
         });
     };
     console.log("Fetched " + i + " markets from relevant groups");
@@ -512,9 +516,8 @@ async function reloadMarkets() {
         }
 
         // market.textDescription is only available with an additional API call,
-        // so only do it if we think it'll really help with display, if it's not
-        // a "stock"
-        if (!market.question.match(/stock/i)) {
+        // so only do it if the market is in the Manifans group
+        if (market.markedManifans) {
             // Fetch market description data from the API
             const marketDescriptionResponse = await retryFetch(getMarketDescriptionUrl(market.id));
             // Wait for the response to be parsed before continuing
@@ -575,7 +578,8 @@ async function reloadMarkets() {
             subject = "Permanent Stock";
         }
 
-        // Load from description if specified
+        // Load from description if specified, (Note from above that the
+        // textDescription isn't always available)
         subject = extractFromDescription("subject", market.textDescription, 20) || subject
 
         // If length of subject is 0 or too long, skip this market
