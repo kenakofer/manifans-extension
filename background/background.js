@@ -1,7 +1,7 @@
 EXTENSION_PREFIX = 'manifans-extension_';
 
 FULL_RELOAD_AFTER_SECONDS = 30 * 60; // 30 minutes
-MARKET_FETCH_BATCH_SIZE = 5;
+MARKET_FETCH_BATCH_SIZE = 20;
 DIRECTIONS = ['YES', 'NO'];
 TOP_SPOTS_TO_LOAD = 5; // This is for data processing, not for displaying. It should be greater than or equal to the max of places-to-show slider in popup.js
 
@@ -21,7 +21,7 @@ NECESSARY_MARKET_KEYS = ['url', 'displayStrings', 'totalLiquidity'];
 PERMANENT_GROUP_ID = '2T4mM0N5az2lYcaN5G50';
 MARKETS_IN_GROUP_URL = 'https://manifold.markets/api/v0/group/by-id/ID/markets';
 MANIFANS_GROUP_ID = '3cpr3RrU1ZCe19JQGIRK';
-FETCH_POSITIONS_URL = 'https://manifold.markets/api/v0/market/ID/positions';
+FETCH_POSITIONS_URL = 'https://manifold.markets/api/v0/market/ID/positions?order=shares&top=' + TOP_SPOTS_TO_LOAD + '&bottom=' + TOP_SPOTS_TO_LOAD;
 FETCH_MARKET_DESCRIPTION_URL = 'https://manifold.markets/api/v0/market/ID';
 FETCH_BETS_URL = 'https://manifold.markets/api/v0/bets';
 
