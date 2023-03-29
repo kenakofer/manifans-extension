@@ -43,4 +43,3 @@ Once installed, click on the extension icon in your browser to see the status an
     - Change icon while inactive/loading
     - Expand the +3 more on click, then force a harder display filter cutoff
     - Change "chance" and "probability" to "favorable" or "good". Maybe YES and NO as well?
-    - Limit ourselves once API gives that capability
