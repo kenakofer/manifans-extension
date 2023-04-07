@@ -1,6 +1,6 @@
 EXTENSION_PREFIX = 'manifans-extension_';
 MARKET_MAP_KEY = EXTENSION_PREFIX + 'market-map';
-USERNAME_TO_TO_POSITIONS_KEY = EXTENSION_PREFIX + 'user-to-markets';
+USERNAME_TO_POSITIONS_KEY = EXTENSION_PREFIX + 'user-to-markets';
 PLACES_TO_SHOW_KEY = EXTENSION_PREFIX + 'places-to-show';
 TIME_OF_LAST_PAGE_LOAD_KEY = EXTENSION_PREFIX + 'time-of-last-page-load';
 BACKGROUND_HEARTBEAT_KEY = EXTENSION_PREFIX + 'background-heartbeat';
@@ -234,7 +234,7 @@ async function replaceImages(forceReload=false) {
   // console.log("Replacing images...");
 
   // Load userNameToTopPositions from local storage
-  const userNameToTopPositions = await getJson(USERNAME_TO_TO_POSITIONS_KEY);
+  const userNameToTopPositions = await getJson(USERNAME_TO_POSITIONS_KEY);
 
   if (!userNameToTopPositions) {
     console.log('userNameToTopPositions is null (is it still syncing?), skipping replaceImages');

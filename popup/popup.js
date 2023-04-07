@@ -1,7 +1,7 @@
 // TODO how do I avoid defining these in multiple places?
 EXTENSION_PREFIX = 'manifans-extension_';
 MARKET_MAP_KEY = EXTENSION_PREFIX + 'market-map';
-USERNAME_TO_TO_POSITIONS_KEY = EXTENSION_PREFIX + 'user-to-markets';
+USERNAME_TO_POSITIONS_KEY = EXTENSION_PREFIX + 'user-to-markets';
 PLACES_TO_SHOW_KEY = EXTENSION_PREFIX + 'places-to-show';
 UPDATE_NOW_KEY = EXTENSION_PREFIX + 'update-now';
 TIME_OF_LAST_UPDATE_KEY = EXTENSION_PREFIX + 'time-of-last-update';

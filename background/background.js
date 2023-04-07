@@ -7,7 +7,7 @@ TOP_SPOTS_TO_LOAD = 5; // This is for data processing, not for displaying. It sh
 ALLOWED_OUTCOME_TYPES = ['BINARY', 'STONK'];
 
 MARKET_MAP_KEY = EXTENSION_PREFIX + 'market-map';
-USERNAME_TO_TO_POSITIONS_KEY = EXTENSION_PREFIX + 'user-to-markets';
+USERNAME_TO_POSITIONS_KEY = EXTENSION_PREFIX + 'user-to-markets';
 PLACES_TO_SHOW_KEY = EXTENSION_PREFIX + 'places-to-show';
 UPDATE_NOW_KEY = EXTENSION_PREFIX + 'update-now';
 TIME_OF_LAST_UPDATE_KEY = EXTENSION_PREFIX + 'time-of-last-update';
@@ -111,7 +111,7 @@ async function fillInMissingData() {
 
 
     var marketMap = await getJson(MARKET_MAP_KEY);
-    var userNameToTopPositions = await getJson(USERNAME_TO_TO_POSITIONS_KEY);
+    var userNameToTopPositions = await getJson(USERNAME_TO_POSITIONS_KEY);
     // Check for empty userNameToTopPositions
     if (userNameToTopPositions && Object.keys(userNameToTopPositions).length === 0) {
         userNameToTopPositions = null;
@@ -436,7 +436,7 @@ async function buildUserNameToTopPositions(spots, marketMap, useExistingUsername
 
     //save userNameToTopPositions to local storage
     console.log("Saving positions to local storage.");
-    store(USERNAME_TO_TO_POSITIONS_KEY, JSON.stringify(userNameToTopPositions));
+    store(USERNAME_TO_POSITIONS_KEY, JSON.stringify(userNameToTopPositions));
 
     // If this was a full update
     if (!idsToUpdate) {
@@ -456,7 +456,6 @@ function getMarketsInGroupUrl(group_id) {
 async function reloadMarkets() {
     console.log('reloadMarkets()');
     // Get the full list of markets, sifting through them for the permanent binary ones
-    var marketMap = {};
     var markets = {};
     var i = 0;
 
@@ -503,6 +502,8 @@ async function reloadMarkets() {
 
     console.log(markets);
 
+
+    var marketMap = {};
 
     // Loop over the keys in markets
     for (const market_id in markets) {
