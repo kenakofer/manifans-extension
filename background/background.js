@@ -4,6 +4,7 @@ FULL_RELOAD_AFTER_SECONDS = 30 * 60; // 30 minutes
 MARKET_FETCH_BATCH_SIZE = 20;
 DIRECTIONS = ['YES', 'NO'];
 TOP_SPOTS_TO_LOAD = 5; // This is for data processing, not for displaying. It should be greater than or equal to the max of places-to-show slider in popup.js
+ALLOWED_OUTCOME_TYPES = ['BINARY', 'STONK'];
 
 MARKET_MAP_KEY = EXTENSION_PREFIX + 'market-map';
 USERNAME_TO_TO_POSITIONS_KEY = EXTENSION_PREFIX + 'user-to-markets';
@@ -505,8 +506,8 @@ async function reloadMarkets() {
         // console.log("Processing market " + market_id)
         const market = markets[market_id];
 
-        // Only binary markets
-        if (market.outcomeType !== 'BINARY') {
+        // Only markets in the allowed outcome types
+        if (!ALLOWED_OUTCOME_TYPES.includes(market.outcomeType)) {
             continue;
         }
 
