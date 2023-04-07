@@ -469,11 +469,14 @@ async function reloadMarkets() {
         console.log(groupMarkets);
 
         groupMarkets.forEach((market) => {
-            i++;
-            markets[market.id] = market;
-            // If g==0, this is the first group, so add a special flag to these markets
-            if (g == 0) {
-                market.markedManifans = true;
+            // If the market isn't already in the map, add it
+            if (!(market.id in markets)) {
+                i++;
+                markets[market.id] = market;
+                // If g==0, this is the first group, so add a special flag to these markets
+                if (g == 0) {
+                    market.markedManifans = true;
+                }
             }
         });
     };
