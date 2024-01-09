@@ -6,7 +6,7 @@
   height: 28px;
   background-image: url('foam-hand.png'), url('chrome-extension://__MSG_@@extension_id__/content/foam-hand.png');
   background-size: cover;
-  z-index: 9999;
+  z-index: 49;
 }
 
 .inherit-background {
@@ -21,7 +21,7 @@
   height: 24px;
   background-image: url('foam-hand.png'), url('chrome-extension://__MSG_@@extension_id__/content/foam-hand.png');
   background-size: cover;
-  z-index: 9999;
+  z-index: 49;
 }
 
 .example-hover-text {
@@ -31,7 +31,7 @@
   padding: 4px;
   padding-top: 7px;
   background-color: #334054;
-  z-index: 9998;
+  z-index: 48;
   white-space: nowrap;
   border: 1px solid black;
   border-radius: 5px;

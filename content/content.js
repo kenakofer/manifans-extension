@@ -331,18 +331,18 @@ async function replaceImages(forceReload=false) {
 
     iconDiv.addEventListener('mouseleave', () => {
       hoverTextTable.style.display = 'none';
-      hoverTextTable.style.zIndex = '9998';
-      iconDiv.style.zIndex = '9999';
+      hoverTextTable.style.zIndex = '48';
+      iconDiv.style.zIndex = '49';
     });
 
     // add event listeners to the hoverTextTable to keep it displayed when the user hovers over it
     hoverTextTable.addEventListener('mouseenter', () => {
       hoverTextTable.style.display = 'block';
-      hoverTextTable.style.zIndex = '9999';
+      hoverTextTable.style.zIndex = '49';
     });
     hoverTextTable.addEventListener('mouseleave', () => {
       hoverTextTable.style.display = 'none';
-      hoverTextTable.style.zIndex = '9998';
+      hoverTextTable.style.zIndex = '48';
     });
     // prevent the event from bubbling up to the parent img element
     hoverTextTable.addEventListener('mouseover', (event) => {
