@@ -20,11 +20,11 @@ IGNORE_DESTINY_KEY = EXTENSION_PREFIX + 'ignore-destiny';
 NECESSARY_MARKET_KEYS = ['url', 'displayStrings', 'totalLiquidity'];
 
 PERMANENT_GROUP_ID = '2T4mM0N5az2lYcaN5G50';
-MARKETS_IN_GROUP_URL = 'https://manifold.markets/api/v0/group/by-id/ID/markets';
+MARKETS_IN_GROUP_URL = 'https://api.manifold.markets/v0/group/by-id/ID/markets';
 MANIFANS_GROUP_ID = '3cpr3RrU1ZCe19JQGIRK';
-FETCH_POSITIONS_URL = 'https://manifold.markets/api/v0/market/ID/positions?order=shares&top=' + TOP_SPOTS_TO_LOAD + '&bottom=' + TOP_SPOTS_TO_LOAD;
-FETCH_MARKET_DESCRIPTION_URL = 'https://manifold.markets/api/v0/market/ID';
-FETCH_BETS_URL = 'https://manifold.markets/api/v0/bets';
+FETCH_POSITIONS_URL = 'https://api.manifold.markets/v0/market/ID/positions?order=shares&top=' + TOP_SPOTS_TO_LOAD + '&bottom=' + TOP_SPOTS_TO_LOAD;
+FETCH_MARKET_DESCRIPTION_URL = 'https://api.manifold.markets/v0/market/ID';
+FETCH_BETS_URL = 'https://api.manifold.markets/v0/bets';
 
 RELEVANT_GROUPS = [
     '3cpr3RrU1ZCe19JQGIRK', // manifold.markets/group/manifans

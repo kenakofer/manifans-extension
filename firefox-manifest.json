@@ -23,7 +23,7 @@
     "storage",
     "activeTab",
     "https://manifold.markets/*",
-    "https://manifold.markets/api/v0/markets"
+    "https://api.manifold.markets/v0/markets"
   ],
   "background": {
     "scripts": [
